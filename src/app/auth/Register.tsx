@@ -1,10 +1,104 @@
-// import React from 'react'
-
+import { RegisterInterface } from "@/hooks/interfaces"
+import { RegisterRequest } from "@/hooks/requests";
+import { getDaysInMonth, monthList, years } from "@/hooks/reusables";
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 function Register() {
 
-  const navigate = useNavigate()
+  const registerDefault = {
+    fullname: {
+        firstName: "",
+        middleName: "",
+        lastName: ""
+    },
+    birthdate: {
+        month: "",
+        day: "",
+        year: ""
+    },
+    contact: "",
+    email: "",
+    password: ""
+  }
+
+  const [registerData, setregisterData] = useState<RegisterInterface>(registerDefault)
+
+  const navigate = useNavigate();
+
+  const RegisterProcess = () => {
+    RegisterRequest(registerData).then((response) => {
+      if(response.data.status){
+        setregisterData(registerDefault);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const setmonth = (newmonth: string) => {
+    setregisterData({
+      ...registerData,
+      birthdate: {
+        ...registerData.birthdate,
+        month: newmonth
+      }
+    })
+  }
+
+  const setday = (newday: string) => {
+    setregisterData({
+      ...registerData,
+      birthdate: {
+        ...registerData.birthdate,
+        day: newday
+      }
+    })
+  }
+
+  const setyear = (newyear: string) => {
+    setregisterData({
+      ...registerData,
+      birthdate: {
+        ...registerData.birthdate,
+        year: newyear
+      }
+    })
+  }
+
+  const mutatename = (indicator: string, value: string) => {
+    switch(indicator){
+      case "firstName":
+        setregisterData({
+          ...registerData,
+          fullname:{
+            ...registerData.fullname,
+            firstName: value
+          }
+        });
+        break;
+      case "middleName":
+        setregisterData({
+          ...registerData,
+          fullname:{
+            ...registerData.fullname,
+            middleName: value
+          }
+        });
+        break;
+      case "lastName":
+        setregisterData({
+          ...registerData,
+          fullname:{
+            ...registerData.fullname,
+            lastName: value
+          }
+        });
+        break;
+      default:
+        return false;
+    }
+  }
 
   return (
     <div className="bg-[#fafafa] w-full h-full flex flex-col justify-center items-center font-Inter">
@@ -16,19 +110,61 @@ function Register() {
         </div>
         <div className="flex flex-col gap-[10px] items-center">
           <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
-            <input type="text" placeholder="First Name" id="firstname" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+            <input type="text" placeholder="First Name" value={registerData.fullname.firstName} onChange={(e) => { mutatename("firstName", e.target.value) }} id="firstname" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
           </div>
           <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
-            <input type="text" placeholder="Last Name" id="lastname" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+            <input type="text" placeholder="Middle Name (optional)" value={registerData.fullname.middleName} onChange={(e) => { mutatename("middleName", e.target.value) }} id="middlename" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
           </div>
           <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
-            <input type="text" placeholder="Email" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+            <input type="text" placeholder="Last Name" value={registerData.fullname.lastName} onChange={(e) => { mutatename("lastName", e.target.value) }} id="lastname" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+          </div>
+          <div className="w-full flex items-center justify-center flex-row gap-[5px]">
+            <div className='w-full flex flex-row items-center justify-center max-w-[400px] gap-[10px]'>
+              <select className='p-[10px] border-[#e8eaed] border-[1px] flex flex-1 h-[45px]' placeholder='Month' value={registerData.birthdate.month} onChange={(e) => { setmonth(e.target.value) }}>
+                <option value="" defaultValue={""}>Month</option>
+                {monthList.map((val, i) => {
+                  return(
+                    <option key={i} value={val}>{val}</option>
+                  )
+                })}
+              </select>
+              <select className='p-[10px] border-[#e8eaed] border-[1px] flex flex-1 h-[45px]' placeholder='Day' value={registerData.birthdate.day} onChange={(e) => {
+                setday(e.target.value)
+              }}>
+                <option value="" defaultValue={""}>Day</option>
+                {registerData.birthdate.month != "" && registerData.birthdate.year != ""? (
+                  getDaysInMonth(registerData.birthdate.month, parseInt(registerData.birthdate.year)).map((val, i) => {
+                    return(
+                      <option key={i} value={val}>{val}</option>
+                    )
+                  })
+                ) : null}
+              </select>
+              <select className='p-[10px] border-[#e8eaed] border-[1px] flex flex-1 h-[45px]' placeholder='Year' value={registerData.birthdate.year} onChange={(e) => { setyear(e.target.value) }}>
+                <option value="" defaultValue={""}>Year</option>
+                {years.map((val, i) => {
+                  return(
+                    <option key={i} value={val}>{val}</option>
+                  )
+                })}
+              </select>
+            </div>
           </div>
           <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
-            <input type="password" placeholder="Password" className="flex flex-1 pl-[15px]  pr-[15px] text-[14px]" />
+            <input type="text" value={registerData.contact} onChange={(e) => { setregisterData({ ...registerData, contact: e.target.value }) }} placeholder="Contact Number" id="contact" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+          </div>
+          <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
+            <input type="text" value={registerData.email} onChange={(e) => { setregisterData({ ...registerData, email: e.target.value }) }} placeholder="Email" id="email" className="flex flex-1 pl-[15px] pr-[15px] text-[14px]" />
+          </div>
+          <div className="w-full bg-white max-w-[400px] h-[45px] flex flex-row border-[#e8eaed] border-[1px]">
+            <input type="password" value={registerData.password} onChange={(e) => { setregisterData({ ...registerData, password: e.target.value }) }} placeholder="Password" className="flex flex-1 pl-[15px]  pr-[15px] text-[14px]" />
           </div>
           <div className="w-full bg-transparent max-w-[400px] h-[45px] flex flex-row items-center gap-[5px] pt-[20px]">
-            <button className="flex flex-row justify-center items-center gap-1 bg-black border-[2px] border-[#000000] w-full h-[40px] rounded-[5px] text-center text-white text-[15px] font-semibold">Confirm</button>
+            <button 
+            onClick={() => {
+              RegisterProcess();
+            }}
+            className="flex flex-row justify-center items-center gap-1 bg-black border-[2px] border-[#000000] w-full h-[40px] rounded-[5px] text-center text-white text-[15px] font-semibold">Confirm</button>
           </div>
           <div className="w-full bg-transparent max-w-[400px] h-[45px] flex flex-row items-center gap-[5px] pt-[20px] justify-center">
             <span className="text-[14px] -mt-[1px]">Already have an account?</span>

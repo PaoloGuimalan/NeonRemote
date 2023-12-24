@@ -1,28 +1,3 @@
-import React from 'react'
-import { ContextMenu } from "./interfaces"
-
-const contextMenuHandler = (e: React.MouseEvent, settoggleContextMenu: React.Dispatch<ContextMenu>) => {
-    e.preventDefault()
-    var target = e.target as HTMLDivElement
-    // var bounds = target.getBoundingClientRect()
-
-    target.focus()
-
-    settoggleContextMenu({
-        toggle: false,
-        x: e.clientX,
-        y: e.clientY 
-    })
-
-    setTimeout(() => {
-        settoggleContextMenu({
-            toggle: true,
-            x: e.clientX,
-            y: e.clientY 
-        })
-    },100)
-}
-
 const checkIfValid = (array: Array<any>) => {
     var notValidCount = 0;
     array.map((vars) => {
@@ -47,9 +22,29 @@ const dateconverter = (stringdate: String) => {
     return dateFinalFormat;
 }
 
+const monthList : string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+const currentYear = (new Date()).getFullYear();
+const validYear = currentYear - 15;
+const range = (start: number, stop: number, step: number) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step));
+const finalYears = range(validYear, validYear - 50, -1)
+
+const getDaysInMonth = (monthProp: string, year: number) => {
+    const month = monthList.indexOf(monthProp)
+    var date = new Date(year, month, 1);
+    var days = [];
+    while (date.getMonth() === month) {
+      days.push(new Date(date).getDate());
+      date.setDate(date.getDate() + 1);
+    }
+    return days;
+}
+
 export {
-    contextMenuHandler,
     checkIfValid,
     checkIfRolePermitted,
-    dateconverter
+    dateconverter,
+    monthList,
+    finalYears as years,
+    getDaysInMonth
 }

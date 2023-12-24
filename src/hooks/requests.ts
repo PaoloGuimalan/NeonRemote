@@ -67,6 +67,22 @@ const LoginRequest = (params: any, dispatch: Dispatch<any>, authentication: Auth
     })
 }
 
+const RegisterRequest = async (payload: any) => {
+    const encodedpayload = sign(payload, SECRET);
+    const urlencoded = new URLSearchParams()
+    urlencoded.append("token", encodedpayload)
+
+    return await Axios.post(`${API}${AUTH.register}`, urlencoded,{
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    }).then((response) => {
+        return response;
+    }).catch((err) => {
+        throw new Error(err);
+    })
+}
+
 const LogoutRequest = (params: any, callback: () => void) => {
     const encodedParams = sign(params, SECRET)
     const urlencoded = new URLSearchParams()
@@ -83,11 +99,10 @@ const LogoutRequest = (params: any, callback: () => void) => {
     }).catch((err) => {
         console.log(err)
     })
-
-    // callback()
 }
 
 export {
     LoginRequest,
+    RegisterRequest,
     LogoutRequest
 }

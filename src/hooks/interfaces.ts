@@ -1,23 +1,17 @@
-export interface ContextMenu{
-    toggle: boolean,
-    x: number,
-    y: number
-}
-
-export interface HighlightIndexInterface{
-    start: number,
-    end: number
-}
-
-export interface FieldContextMenuInterface{
-    toggleContextMenu: ContextMenu
-}
-
-export interface EditableTextFieldInterface{
-    onBlur: () => void,
-    onChange: (e: string) => void,
-    initialValue: string,
-    isEditable: boolean
+export interface RegisterInterface{
+    fullname: {
+        firstName: string,
+        middleName: string,
+        lastName: string
+    },
+    birthdate: {
+        month: string,
+        day: string,
+        year: string
+    },
+    contact: string,
+    email: string,
+    password: string
 }
 
 export interface AuthTokenInterface{
@@ -32,10 +26,4 @@ export interface AuthTokenInterface{
 export interface AuthStateInterface{
     auth: boolean | null,
     user: AuthTokenInterface
-}
-
-export interface AppInterface{
-    _id: String,
-    app_name: String,
-    app_description: String
 }
