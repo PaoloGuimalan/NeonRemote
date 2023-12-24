@@ -3,14 +3,14 @@ import { LoginRequest } from '@/hooks/requests';
 import { checkIfValid } from '@/hooks/reusables';
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("")
 
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const authentication = useSelector((state: any) => state.authentication)
   const dispatch = useDispatch()
 
@@ -33,7 +33,7 @@ function Login() {
   }
 
   return (
-    <div className="bg-[#fafafa] w-full h-full flex flex-col justify-center items-center">
+    <div className="bg-[#fafafa] w-full h-full flex flex-col justify-center items-center font-Inter">
       <div className="bg-transparent w-[95%] max-w-[500px] flex flex-col gap-[30px]">
         <span className="font-bold text-[35px]">Neon Remote</span>
         <div className="flex flex-col w-full max-w-[400px] items-start self-center">
@@ -58,10 +58,10 @@ function Login() {
             }}
             className="flex flex-row justify-center items-center gap-1 bg-black border-[2px] border-[#000000] w-full h-[40px] rounded-[5px] text-center text-white text-[15px] font-semibold">Login</button>
           </div>
-          {/* <div className="w-full bg-transparent max-w-[400px] h-[45px] flex flex-row items-center gap-[5px] pt-[20px] justify-center">
+          <div className="w-full bg-transparent max-w-[400px] h-[45px] flex flex-row items-center gap-[5px] pt-[20px] justify-center">
             <span className="text-[14px] -mt-[1px]">Do not have an account?</span>
             <a onClick={() => { navigate("/register") }} className="text-[14px] -mt-[1px] cursor-pointer border-b-[1px] border-[#000000]">Create an account.</a>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

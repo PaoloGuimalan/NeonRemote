@@ -7,9 +7,9 @@ function Register() {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-[#fafafa] w-full h-full flex flex-col justify-center items-center">
+    <div className="bg-[#fafafa] w-full h-full flex flex-col justify-center items-center font-Inter">
       <div className="bg-transparent w-[95%] max-w-[500px] flex flex-col gap-[30px]">
-        <span className="font-bold text-[35px]">CMS</span>
+        <span className="font-bold text-[35px]">Neon Remote</span>
         <div className="flex flex-col w-full max-w-[400px] items-start self-center">
           <span className="mb-[20px] border-b-[2px] border-[#000000] pb-[5px] text-[15px] font-semibold">Create an account</span>
           <hr className="w-full max-w-[400px] border-[1px] border-[#e8eaed]"/>

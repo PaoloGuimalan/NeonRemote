@@ -5,8 +5,8 @@ import sign from 'jwt-encode';
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
 
-const API = import.meta.env.VITE_REACT_API_URL;
-const SECRET = import.meta.env.VITE_REACT_SECRET;
+const API = import.meta.env.VITE_NEON_AI_API;
+const SECRET = import.meta.env.VITE_JWT_SECRET;
 
 const LoginRequest = (params: any, dispatch: Dispatch<any>, authentication: AuthStateInterface) => {
     const encodedParams = sign(params, SECRET)
