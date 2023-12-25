@@ -1,8 +1,7 @@
 import { KeyboardEvent } from 'react';
 import { checkIfValid } from '@/hooks/reusables';
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 import { SET_AUTHENTICATION } from '@/redux/types';
 import { authenticationstate } from '@/redux/actions/states';
 
@@ -10,8 +9,6 @@ function Verification() {
 
   const [verification_code, setverification_code] = useState("");
 
-  const navigate = useNavigate()
-  const authentication = useSelector((state: any) => state.authentication)
   const dispatch = useDispatch()
 
   const verificationProcess = () => {

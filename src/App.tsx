@@ -83,9 +83,9 @@ function App() {
   return (
     <div id='div_app'>
       <Routes>
-        <Route path='/*' element={authentication.auth != null? authentication.auth? <Home /> : <Navigate to={'/login'} /> : null} />
-        <Route path='/login' element={authentication.auth != null? authentication.auth? <Navigate to={'/'} /> : <Login /> : null} />
-        <Route path='/register' element={authentication.auth != null? authentication.auth? <Navigate to={'/'} /> : <Register /> : null} />
+        <Route path='/*' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Home /> : <Navigate to={'/verify'} /> : <Navigate to={'/login'} /> : null} />
+        <Route path='/login' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Login /> : null} />
+        <Route path='/register' element={authentication.auth != null? authentication.auth?  authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Register /> : null} />
         <Route path='/verify' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Verification /> : <Navigate to={'/login'} /> : null} />
       </Routes>
     </div>

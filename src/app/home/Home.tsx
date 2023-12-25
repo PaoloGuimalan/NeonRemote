@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AuthStateInterface } from '@/hooks/interfaces'
 import { SET_AUTHENTICATION } from '@/redux/types'
 import { authenticationstate } from '@/redux/actions/states'
+import { RefreshAuthRequest } from '@/hooks/requests'
+import jwtDecode from 'jwt-decode'
 
 function Home() {
 
@@ -20,7 +22,17 @@ function Home() {
 
   const initProcesses = () => {
     // Initial API Requests
-    console.log(authentication)
+    RefreshAuthRequest(authentication.user.token).then((response) => {
+      if(response.data.status){
+        const decodedToken = jwtDecode(response.data.result);
+        console.log(decodedToken);
+      }
+      else{
+        console.log(response.data.message);
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 
   useEffect(() => {
@@ -42,7 +54,7 @@ function Home() {
 
   return (
     <div className="bg-transparent w-full h-full flex flex-col">
-      <div className="w-full h-[65px] bg-white flex flex-row items-center pl-[20px] pr-[20px] border-b-[1px] border-[#e5e6ea]">
+      <div className="w-full h-[65px] bg-white flex flex-row items-center pl-[20px] pr-[20px] border-b-[1px] border-[#e5e6ea] font-Inter">
         {/* <img src={SampleIcon} onClick={() => { navigate("/") }} className='w-full h-full max-w-[120px] max-h-[50px] cursor-pointer' /> */}
         <img src={SampleIcon} onClick={() => { navigate("/") }} className='w-full h-full max-w-[70px] max-h-[30px] cursor-pointer' />
         <div className='flex flex-1' />
@@ -79,7 +91,7 @@ function Home() {
           className='h-[30px] text-[14px] rounded-[5px] text-red-500 font-semibold'>Logout</motion.button>
         </motion.div> 
       </div>
-      <div className='bg-transparent flex flex-1 flex-row'>
+      <div className='bg-transparent flex flex-1 flex-row font-Inter'>
         <div className='bg-transparent flex flex-col w-[calc(100%-40px)] max-w-[270px] items-start p-[20px] pt-[25px] border-r-[0px] border-[#e5e6ea] gap-[2px]'>
             <motion.button
             whileHover={{

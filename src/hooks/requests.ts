@@ -4,6 +4,7 @@ import { AUTH } from "./endpoints";
 import sign from 'jwt-encode';
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
+import jwtDecode from "jwt-decode";
 
 const API = import.meta.env.VITE_NEON_AI_API;
 const SECRET = import.meta.env.VITE_JWT_SECRET;
@@ -18,16 +19,16 @@ const LoginRequest = (params: any, dispatch: Dispatch<any>, authentication: Auth
             "Content-Type": "application/x-www-form-urlencoded"
         }
     }).then((response) => {
-        if(response.data.success){
-            var userdata = response.data.data[0];
+        if(response.data.status){
+            var decodedToken: any = jwtDecode(response.data.result);
+            var userdata = decodedToken;
             var authtoken = {
-                _id: userdata._id,
-                token: userdata.token,
-                role_permissions: userdata.role_permissions,
-                user_role: userdata.user_role,
-                first_name: userdata.first_name,
-                last_name: userdata.last_name
-            }
+                ...userdata,
+                token: sign({
+                    email: userdata.email,
+                    userID: userdata.userID
+                }, SECRET)
+            };
 
             var encodedAuthToken = sign(authtoken, SECRET)
             localStorage.setItem("authtoken", encodedAuthToken)
@@ -83,26 +84,24 @@ const RegisterRequest = async (payload: any) => {
     })
 }
 
-const LogoutRequest = (params: any, callback: () => void) => {
-    const encodedParams = sign(params, SECRET)
+const RefreshAuthRequest = async (payload: any) => {
+    const encodedpayload = payload;
     const urlencoded = new URLSearchParams()
-    urlencoded.append("token", encodedParams)
+    urlencoded.append("token", encodedpayload)
 
-    Axios.post(`${API}${AUTH.logout}`, urlencoded,{
+    return await Axios.post(`${API}${AUTH.refreshauth}`, urlencoded,{
         headers:{
             "Content-Type": "application/x-www-form-urlencoded"
         }
     }).then((response) => {
-        if(response.data.success){
-            callback()
-        }
+        return response;
     }).catch((err) => {
-        console.log(err)
+        throw new Error(err);
     })
 }
 
 export {
     LoginRequest,
     RegisterRequest,
-    LogoutRequest
+    RefreshAuthRequest
 }

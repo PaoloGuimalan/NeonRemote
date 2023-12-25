@@ -15,6 +15,7 @@ export interface RegisterInterface{
 }
 
 export interface AuthTokenInterface{
+    userID: string,
     fullname: {
         firstName: string,
         middleName: string,
@@ -24,6 +25,10 @@ export interface AuthTokenInterface{
         month: string,
         day: string,
         year: string
+    },
+    dateCreated: {
+        date: string,
+        time: string
     },
     contact: string,
     email: string,
