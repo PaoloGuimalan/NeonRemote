@@ -8,6 +8,7 @@ import { AuthStateInterface } from './hooks/interfaces'
 import jwtDecode from 'jwt-decode';
 import { SET_AUTHENTICATION } from './redux/types';
 import Register from './app/auth/Register';
+import Verification from './app/auth/Verification';
 // import Register from './app/auth/Register'
 
 function App() {
@@ -84,7 +85,8 @@ function App() {
       <Routes>
         <Route path='/*' element={authentication.auth != null? authentication.auth? <Home /> : <Navigate to={'/login'} /> : null} />
         <Route path='/login' element={authentication.auth != null? authentication.auth? <Navigate to={'/'} /> : <Login /> : null} />
-        <Route path='/register' element={<Register />} />
+        <Route path='/register' element={authentication.auth != null? authentication.auth? <Navigate to={'/'} /> : <Register /> : null} />
+        <Route path='/verify' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Verification /> : <Navigate to={'/login'} /> : null} />
       </Routes>
     </div>
   )

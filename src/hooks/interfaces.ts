@@ -15,12 +15,22 @@ export interface RegisterInterface{
 }
 
 export interface AuthTokenInterface{
-    _id: String,
-    token: String | null,
-    role_permissions: Array<String>,
-    user_role: String,
-    first_name: String,
-    last_name: String
+    fullname: {
+        firstName: string,
+        middleName: string,
+        lastName: string
+    },
+    birthdate: {
+        month: string,
+        day: string,
+        year: string
+    },
+    contact: string,
+    email: string,
+    profile: string,
+    token: string,
+    isActivated: boolean,
+    isVerified: boolean
 }
 
 export interface AuthStateInterface{

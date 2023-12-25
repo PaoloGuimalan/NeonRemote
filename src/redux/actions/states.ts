@@ -1,11 +1,21 @@
 export const authenticationstate = {
     auth: null,
     user: {
-        _id: "",
+        fullname: {
+            firstName: "",
+            middleName: "",
+            lastName: ""
+        },
+        birthdate: {
+            month: "",
+            day: "",
+            year: ""
+        },
+        contact: "",
+        email: "",
+        profile: "",
         token: "",
-        role_permissions: [],
-        user_role: "",
-        first_name: "",
-        last_name: ""
+        isActivated: false,
+        isVerified: false
     }
 }
