@@ -78,7 +78,11 @@ const RegisterRequest = async (payload: any) => {
             "Content-Type": "application/x-www-form-urlencoded"
         }
     }).then((response) => {
-        return response;
+        const mutatedresponse = {
+            ...response,
+            SECRET: SECRET
+        }
+        return mutatedresponse;
     }).catch((err) => {
         throw new Error(err);
     })

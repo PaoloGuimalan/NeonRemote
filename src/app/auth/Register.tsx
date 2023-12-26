@@ -1,7 +1,11 @@
 import { RegisterInterface } from "@/hooks/interfaces"
 import { RegisterRequest } from "@/hooks/requests";
 import { getDaysInMonth, monthList, years } from "@/hooks/reusables";
+import { SET_AUTHENTICATION } from "@/redux/types";
+import jwtDecode from "jwt-decode";
+import sign from "jwt-encode";
 import { useState } from "react"
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"
 
 function Register() {
@@ -25,11 +29,33 @@ function Register() {
   const [registerData, setregisterData] = useState<RegisterInterface>(registerDefault)
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const RegisterProcess = () => {
     RegisterRequest(registerData).then((response) => {
       if(response.data.status){
         setregisterData(registerDefault);
+        var decodedToken: any = jwtDecode(response.data.result);
+        var userdata = decodedToken;
+        var authtoken = {
+            ...userdata,
+            token: sign({
+                email: userdata.email,
+                userID: userdata.userID
+            }, response.SECRET)
+        };
+
+        var encodedAuthToken = sign(authtoken, response.SECRET)
+        localStorage.setItem("authtoken", encodedAuthToken)
+        dispatch({
+            type: SET_AUTHENTICATION,
+            payload:{
+                authentication: {
+                    auth: true,
+                    user: authtoken
+                }
+            }
+        })
       }
     }).catch((err) => {
       console.log(err);
