@@ -1,22 +1,73 @@
 import { KeyboardEvent } from 'react';
 import { checkIfValid } from '@/hooks/reusables';
 import { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_AUTHENTICATION } from '@/redux/types';
 import { authenticationstate } from '@/redux/actions/states';
+import { useToast } from '@/components/ui/use-toast';
+import { VerificationRequest } from '@/hooks/requests';
+import { AuthStateInterface } from '@/hooks/interfaces';
+import jwtDecode from 'jwt-decode';
+import sign from 'jwt-encode';
 
 function Verification() {
 
+  const authentication: AuthStateInterface = useSelector((state: any) => state.authentication)
+
   const [verification_code, setverification_code] = useState("");
 
+  const { toast } = useToast()
   const dispatch = useDispatch()
 
   const verificationProcess = () => {
     if(checkIfValid([verification_code])){
-      
+      VerificationRequest({
+        userID: authentication.user.userID,
+        code: verification_code
+      }).then((response) => {
+        if(response.data.status){
+          var decodedToken: any = jwtDecode(response.data.result);
+          var userdata = decodedToken;
+          var authtoken = {
+              ...userdata,
+              token: sign({
+                  email: userdata.email,
+                  userID: userdata.userID
+              }, response.SECRET)
+          };
+
+          toast({
+            title: response.data.message
+          })
+
+          var encodedAuthToken = sign(authtoken, response.SECRET)
+          localStorage.setItem("authtoken", encodedAuthToken)
+          dispatch({
+              type: SET_AUTHENTICATION,
+              payload:{
+                  authentication: {
+                      auth: true,
+                      user: authtoken
+                  }
+              }
+          })
+        }
+        else{
+          toast({
+            title: response.data.message
+          });
+        }
+      }).catch((err) => {
+        toast({
+          title: err.message
+        });
+      })
     }
     else{
-      console.log("Please complete the fields")
+      // console.log("Please complete the fields")
+      toast({
+        title: "Please enter a valid code"
+      })
     }
   }
 
@@ -27,6 +78,9 @@ function Verification() {
   }
 
   const logoutProcess = () => {
+    toast({
+      title: "Logged out!"
+    })
     localStorage.removeItem("authtoken")
     dispatch({
       type: SET_AUTHENTICATION,

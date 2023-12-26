@@ -10,28 +10,33 @@ import { AuthStateInterface } from '@/hooks/interfaces'
 import { SET_AUTHENTICATION } from '@/redux/types'
 import { authenticationstate } from '@/redux/actions/states'
 import { RefreshAuthRequest } from '@/hooks/requests'
-import jwtDecode from 'jwt-decode'
+import { useToast } from '@/components/ui/use-toast'
 
 function Home() {
 
   const [toggleusercontrols, settoggleusercontrols] = useState(false);
 
   const authentication: AuthStateInterface = useSelector((state: any) => state.authentication)
+  const { toast } = useToast();
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const initProcesses = () => {
     // Initial API Requests
     RefreshAuthRequest(authentication.user.token).then((response) => {
-      if(response.data.status){
-        const decodedToken = jwtDecode(response.data.result);
-        console.log(decodedToken);
-      }
-      else{
-        console.log(response.data.message);
+      if(!response.data.status){
+        toast({
+          title: response.data.message
+        })
+        logoutProcess()
       }
     }).catch((err) => {
-      console.log(err)
+      toast({
+        title: "Request Error",
+        description: err.message,
+        variant: "destructive"
+      })
+      logoutProcess()
     })
   }
 

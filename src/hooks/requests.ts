@@ -90,12 +90,11 @@ const RegisterRequest = async (payload: any) => {
 
 const RefreshAuthRequest = async (payload: any) => {
     const encodedpayload = payload;
-    const urlencoded = new URLSearchParams()
-    urlencoded.append("token", encodedpayload)
 
-    return await Axios.post(`${API}${AUTH.refreshauth}`, urlencoded,{
+    return await Axios.get(`${API}${AUTH.refreshauth}`,{
         headers:{
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "x-access-token": encodedpayload
         }
     }).then((response) => {
         return response;
@@ -104,8 +103,29 @@ const RefreshAuthRequest = async (payload: any) => {
     })
 }
 
+const VerificationRequest = async (payload: any) => {
+    const encodedpayload = sign(payload, SECRET);
+    const urlencoded = new URLSearchParams()
+    urlencoded.append("token", encodedpayload)
+
+    return await Axios.post(`${API}${AUTH.verification}`, urlencoded,{
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    }).then((response) => {
+        const mutatedresponse = {
+            ...response,
+            SECRET: SECRET
+        }
+        return mutatedresponse;
+    }).catch((err) => {
+        throw new Error(err);
+    })
+}
+
 export {
     LoginRequest,
     RegisterRequest,
-    RefreshAuthRequest
+    RefreshAuthRequest,
+    VerificationRequest
 }

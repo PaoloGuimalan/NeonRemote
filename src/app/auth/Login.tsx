@@ -4,12 +4,14 @@ import { checkIfValid } from '@/hooks/reusables';
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { useToast } from '@/components/ui/use-toast';
 
 function Login() {
 
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("")
 
+  const { toast } = useToast()
   const navigate = useNavigate()
   const authentication = useSelector((state: any) => state.authentication)
   const dispatch = useDispatch()
@@ -20,9 +22,15 @@ function Login() {
         email: email,
         password: password
       }, dispatch, authentication)
+      toast({
+        title: "Logged In"
+      })
     }
     else{
-      console.log("Please complete the fields")
+      // console.log("Please complete the fields")
+      toast({
+        title: "Please complete the fields"
+      })
     }
   }
 

@@ -9,6 +9,7 @@ import jwtDecode from 'jwt-decode';
 import { SET_AUTHENTICATION } from './redux/types';
 import Register from './app/auth/Register';
 import Verification from './app/auth/Verification';
+import { Toaster } from './components/ui/toaster';
 // import Register from './app/auth/Register'
 
 function App() {
@@ -82,6 +83,9 @@ function App() {
 
   return (
     <div id='div_app'>
+      <div className='font-Inter'>
+        <Toaster />
+      </div>
       <Routes>
         <Route path='/*' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Home /> : <Navigate to={'/verify'} /> : <Navigate to={'/login'} /> : null} />
         <Route path='/login' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Login /> : null} />

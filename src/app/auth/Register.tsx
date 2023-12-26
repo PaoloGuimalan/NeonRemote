@@ -1,3 +1,4 @@
+import { useToast } from "@/components/ui/use-toast";
 import { RegisterInterface } from "@/hooks/interfaces"
 import { RegisterRequest } from "@/hooks/requests";
 import { getDaysInMonth, monthList, years } from "@/hooks/reusables";
@@ -28,6 +29,7 @@ function Register() {
 
   const [registerData, setregisterData] = useState<RegisterInterface>(registerDefault)
 
+  const { toast } = useToast()
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -45,6 +47,10 @@ function Register() {
             }, response.SECRET)
         };
 
+        toast({
+          title: response.data.message
+        })
+
         var encodedAuthToken = sign(authtoken, response.SECRET)
         localStorage.setItem("authtoken", encodedAuthToken)
         dispatch({
@@ -55,6 +61,11 @@ function Register() {
                     user: authtoken
                 }
             }
+        })
+      }
+      else{
+        toast({
+          title: response.data.message
         })
       }
     }).catch((err) => {
