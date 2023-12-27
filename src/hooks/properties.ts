@@ -30,6 +30,30 @@ const reactQuillProperties = () => {
       }
 }
 
+const featuredisplay = [
+  {
+    name: "Devices",
+    description: "Add, Access, Control your devices remotely.",
+    route: "/devices"
+  },
+  {
+    name: "Map Tracker",
+    description: "Use map to track, navigate and locate devices and services.",
+    route: "/map"
+  },
+  {
+    name: "Streaming",
+    description: "Stream Music and Videos from any of your devices.",
+    route: ""
+  },
+  {
+    name: "Peer Storage",
+    description: "Move, Copy, Share files from your devices remotely.",
+    route: ""
+  }
+]
+
 export {
-    reactQuillProperties
+    reactQuillProperties,
+    featuredisplay
 }

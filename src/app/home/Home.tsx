@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
-import SampleIcon from '../../assets/SampleIcon.png'
+import SampleIcon from '../../assets/SampleIcon.svg'
 import { FiUser } from 'react-icons/fi'
 import { MdDevicesOther, MdOutlineSettings } from 'react-icons/md'
+import { BiMapAlt } from "react-icons/bi";
 import { FiHome } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +14,7 @@ import { AuthStateInterface } from '@/hooks/interfaces'
 import Feed from '../subcomponents/Feed'
 import Devices from '../subcomponents/Devices'
 import Settings from '../subcomponents/Settings'
+import Map from '../subcomponents/Map'
 
 function Home() {
 
@@ -49,7 +51,7 @@ function Home() {
     <div className="bg-transparent w-full h-full flex flex-col">
       <div className="w-full h-[65px] bg-white flex flex-row items-center pl-[20px] pr-[20px] border-b-[1px] border-[#e5e6ea] font-Inter">
         {/* <img src={SampleIcon} onClick={() => { navigate("/") }} className='w-full h-full max-w-[120px] max-h-[50px] cursor-pointer' /> */}
-        <img src={SampleIcon} onClick={() => { navigate("/") }} className='w-full h-full max-w-[70px] max-h-[30px] cursor-pointer' />
+        <img src={SampleIcon} onClick={() => { navigate("/") }} className='w-full h-full max-w-[70px] max-h-[30px] cursor-pointer object-cover' />
         <div className='flex flex-1' />
         <button
         onClick={() => {
@@ -85,7 +87,7 @@ function Home() {
         </motion.div> 
       </div>
       <div className='bg-transparent flex flex-1 flex-row font-Inter'>
-        <div className='bg-transparent flex flex-col w-[calc(100%-40px)] max-w-[270px] items-start p-[20px] pt-[25px] border-r-[0px] border-[#e5e6ea] gap-[2px]'>
+        <div className='bg-transparent flex h-[100%-50px] flex-col w-[calc(100%-40px)] max-w-[270px] items-start p-[20px] pt-[25px] border-r-[0px] border-[#e5e6ea] gap-[2px] overflow-y-auto x-scroll'>
             <motion.button
             whileHover={{
               backgroundColor: "#f3f5f9"
@@ -96,6 +98,17 @@ function Home() {
             className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start items-center text-[14px] font-semibold gap-2'>
               <FiHome style={{fontSize: "20px", color: "#000000"}} />
               <span className='text-[#000000]'>Home</span>
+            </motion.button>
+            <motion.button
+            whileHover={{
+              backgroundColor: "#f3f5f9"
+            }} 
+            onClick={() => {
+              navigate("/map")
+            }} 
+            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start items-center text-[14px] font-semibold gap-2'>
+              <BiMapAlt style={{fontSize: "22px", color: "#000000"}} />
+              <span className='text-[#000000]'>Map</span>
             </motion.button>
             <motion.button
             whileHover={{
@@ -120,9 +133,10 @@ function Home() {
               <span className='text-[#000000]'>Settings</span>
             </motion.button>
         </div>
-        <div className='bg-[#f7f7f7] flex flex-col flex-1 h-[calc(100vh-65px)] overflow-y-auto x-scroll'>
+        <div className='flex flex-col flex-1 h-[calc(100vh-65px)] overflow-y-auto x-scroll'> {/**bg-[#f7f7f7]  */} 
           <Routes>
             <Route path='/' element={<Feed />} />
+            <Route path='/map/*' element={<Map />} />
             <Route path='/devices/*' element={<Devices />} />
             <Route path='/settings/*' element={<Settings />} />
           </Routes>
