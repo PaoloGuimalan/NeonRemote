@@ -6,38 +6,22 @@ import { FiUser } from 'react-icons/fi'
 import { AiOutlineFileDone, AiOutlineExclamationCircle, AiOutlineComment } from 'react-icons/ai'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
-import { AuthStateInterface } from '@/hooks/interfaces'
 import { SET_AUTHENTICATION } from '@/redux/types'
 import { authenticationstate } from '@/redux/actions/states'
-import { RefreshAuthRequest } from '@/hooks/requests'
-import { useToast } from '@/components/ui/use-toast'
+import { CloseSSENotifications, SSENotificationsTRequest } from '@/hooks/sseclient'
+import { AuthStateInterface } from '@/hooks/interfaces'
 
 function Home() {
 
   const [toggleusercontrols, settoggleusercontrols] = useState(false);
 
   const authentication: AuthStateInterface = useSelector((state: any) => state.authentication)
-  const { toast } = useToast();
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const initProcesses = () => {
     // Initial API Requests
-    RefreshAuthRequest(authentication.user.token).then((response) => {
-      if(!response.data.status){
-        toast({
-          title: response.data.message
-        })
-        logoutProcess()
-      }
-    }).catch((err) => {
-      toast({
-        title: "Request Error",
-        description: err.message,
-        variant: "destructive"
-      })
-      logoutProcess()
-    })
+    SSENotificationsTRequest(authentication ,dispatch);
   }
 
   useEffect(() => {
@@ -45,6 +29,7 @@ function Home() {
   },[])
 
   const logoutProcess = () => {
+    CloseSSENotifications();
     localStorage.removeItem("authtoken")
     dispatch({
       type: SET_AUTHENTICATION,

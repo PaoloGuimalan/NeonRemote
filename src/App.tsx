@@ -10,27 +10,66 @@ import { SET_AUTHENTICATION } from './redux/types';
 import Register from './app/auth/Register';
 import Verification from './app/auth/Verification';
 import { Toaster } from './components/ui/toaster';
+import { RefreshAuthRequest } from './hooks/requests';
+import { useToast } from './components/ui/use-toast';
 // import Register from './app/auth/Register'
 
 function App() {
 
   const authentication: AuthStateInterface = useSelector((state: any) => state.authentication)
   const dispatch = useDispatch()
+  const { toast } = useToast();
 
   const validateAuthToken = (authtokenlocal: string) => {
     try{
-      var authtokendecode = jwtDecode(authtokenlocal)
+      var authtokendecode : any = jwtDecode(authtokenlocal)
         
         if(authtokendecode){
-          // console.log(authtokendecode)
-          dispatch({
-            type: SET_AUTHENTICATION,
-            payload:{
-              authentication:{
-                auth: true,
-                user: authtokendecode
-              }
+          // console.log(authtokendecode.token)
+          RefreshAuthRequest(authtokendecode.token).then((response) => {
+            if(!response.data.status){
+              toast({
+                title: response.data.message
+              })
+              dispatch({
+                type: SET_AUTHENTICATION,
+                payload:{
+                  authentication:{
+                    ...authentication,
+                    auth: false
+                  }
+                }
+              })
+              // logoutProcess()
             }
+            else{
+              // console.log(response.data);
+              dispatch({
+                type: SET_AUTHENTICATION,
+                payload:{
+                  authentication:{
+                    auth: true,
+                    user: authtokendecode
+                  }
+                }
+              })
+            }
+          }).catch((err) => {
+            toast({
+              title: "Request Error",
+              description: err.message,
+              variant: "destructive"
+            })
+            dispatch({
+              type: SET_AUTHENTICATION,
+              payload:{
+                authentication:{
+                  ...authentication,
+                  auth: false
+                }
+              }
+            })
+            // logoutProcess()
           })
         }
         else{

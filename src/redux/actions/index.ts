@@ -1,10 +1,6 @@
+import { ActionProp } from "@/hooks/interfaces";
 import { SET_AUTHENTICATION } from "../types";
 import { authenticationstate } from "./states";
-
-interface ActionProp{
-    type: string;
-    payload: any
-}
 
 export const setauthentication = (state = authenticationstate, action: ActionProp) => {
     switch(action.type){

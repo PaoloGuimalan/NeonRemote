@@ -1,3 +1,8 @@
+export interface ActionProp{
+    type: string;
+    payload: any
+}
+
 export interface RegisterInterface{
     fullname: {
         firstName: string,
