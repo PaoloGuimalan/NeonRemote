@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-// import SampleIcon from '../../assets/sample.jpg'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import SampleIcon from '../../assets/SampleIcon.png'
 import { FiUser } from 'react-icons/fi'
-import { AiOutlineFileDone, AiOutlineExclamationCircle, AiOutlineComment } from 'react-icons/ai'
+import { MdDevicesOther, MdOutlineSettings } from 'react-icons/md'
+import { FiHome } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_AUTHENTICATION } from '@/redux/types'
 import { authenticationstate } from '@/redux/actions/states'
 import { CloseSSENotifications, SSENotificationsTRequest } from '@/hooks/sseclient'
 import { AuthStateInterface } from '@/hooks/interfaces'
+import Feed from '../subcomponents/Feed'
+import Devices from '../subcomponents/Devices'
+import Settings from '../subcomponents/Settings'
 
 function Home() {
 
@@ -88,38 +91,40 @@ function Home() {
               backgroundColor: "#f3f5f9"
             }}
             onClick={() => {
-              navigate("/releasenotes")
+              navigate("/")
             }} 
-            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start text-[14px] font-semibold gap-2'>
-              <AiOutlineFileDone style={{fontSize: "22px", color: "#000000"}} />
-              <span className='text-[#000000]'>Release Notes</span>
+            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start items-center text-[14px] font-semibold gap-2'>
+              <FiHome style={{fontSize: "20px", color: "#000000"}} />
+              <span className='text-[#000000]'>Home</span>
             </motion.button>
             <motion.button
             whileHover={{
               backgroundColor: "#f3f5f9"
             }} 
             onClick={() => {
-              navigate("/maintenance")
+              navigate("/devices")
             }} 
-            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start text-[14px] font-semibold gap-2'>
-              <AiOutlineExclamationCircle style={{fontSize: "22px", color: "#000000"}} />
-              <span className='text-[#000000]'>Maintenance</span>
+            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start items-center text-[14px] font-semibold gap-2'>
+              <MdDevicesOther style={{fontSize: "22px", color: "#000000"}} />
+              <span className='text-[#000000]'>Devices</span>
             </motion.button>
             <motion.button
             whileHover={{
               backgroundColor: "#f3f5f9"
             }} 
             onClick={() => {
-              navigate("/feedbacks")
+              navigate("/settings")
             }} 
-            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start text-[14px] font-semibold gap-2'>
-              <AiOutlineComment style={{fontSize: "22px", color: "#000000"}} />
-              <span className='text-[#000000]'>Feedback</span>
+            className='bg-transparent p-[10px] rounded-[7px] pt-[10px] pb-[10px] w-full max-w-[200px] flex flex-row justify-start items-center text-[14px] font-semibold gap-2'>
+              <MdOutlineSettings style={{fontSize: "22px", color: "#000000"}} />
+              <span className='text-[#000000]'>Settings</span>
             </motion.button>
         </div>
-        <div className='bg-transparent flex flex-col flex-1 h-[calc(100vh-65px)] overflow-y-auto x-scroll'>
+        <div className='bg-[#f7f7f7] flex flex-col flex-1 h-[calc(100vh-65px)] overflow-y-auto x-scroll'>
           <Routes>
-            <Route path='/' element={<Navigate to={'/releasenotes'} />} />
+            <Route path='/' element={<Feed />} />
+            <Route path='/devices/*' element={<Devices />} />
+            <Route path='/settings/*' element={<Settings />} />
           </Routes>
         </div>
       </div>
