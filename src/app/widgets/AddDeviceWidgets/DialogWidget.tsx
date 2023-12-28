@@ -10,12 +10,17 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { DeviceInfoInterface, DialogWidgetProp } from "@/hooks/interfaces"
+import { AuthStateInterface, DeviceInfoInterface, DialogWidgetProp } from "@/hooks/interfaces"
 import DropdownMenuWidget from "./DropdownMenuWidget"
 import { useState } from "react"
 import { deviceMobileOSLabels, deviceMobileOSList, deviceOSLabels, deviceOSList, deviceTypeLabels, deviceTypeList } from "@/hooks/properties"
+import { AddDeviceRequest } from "@/hooks/requests"
+import { useToast } from "@/components/ui/use-toast"
+import { useSelector } from "react-redux"
 
 export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
+
+  const authentication: AuthStateInterface = useSelector((state: any) => state.authentication);
 
   const deviceInfoState: DeviceInfoInterface = {
     deviceName: "",
@@ -24,6 +29,9 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
   };
 
   const [deviceInfo, setdeviceInfo] = useState<DeviceInfoInterface>(deviceInfoState);
+  const [openDialog, setopenDialog] = useState<boolean>(false);
+
+  const { toast } = useToast();
 
   const setDeviceType = (newType: string) => {
     if(newType === "embedded" || newType === "none"){
@@ -56,8 +64,34 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
     })
   }
 
+  const AddDeviceProcess = () => {
+    AddDeviceRequest({
+      data: deviceInfo,
+      token: authentication.user.token
+    }).then((response) => {
+      if(response.data.status){
+        setopenDialog(false);
+        setdeviceInfo(deviceInfoState);
+        toast({
+          title: response.data.message
+        })
+      }
+      else{
+        toast({
+          title: response.data.message
+        })
+      }
+    }).catch((err) => {
+      console.log(err);
+      toast({
+        title: err.message
+      })
+    })
+  }
+
   return (
-    <Dialog onOpenChange={(e) => {
+    <Dialog open={openDialog} onOpenChange={(e) => {
+      setopenDialog(e);
       if(!e){
         setdeviceInfo(deviceInfoState);
       }
@@ -102,7 +136,7 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
           )}
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" onClick={() => { AddDeviceProcess() }}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

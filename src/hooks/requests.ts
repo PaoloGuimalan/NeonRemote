@@ -1,6 +1,6 @@
 import { Dispatch } from "react"
 import Axios from 'axios'
-import { AUTH } from "./endpoints";
+import { AUTH, POST } from "./endpoints";
 import sign from 'jwt-encode';
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
@@ -108,7 +108,7 @@ const VerificationRequest = async (payload: any) => {
     const urlencoded = new URLSearchParams()
     urlencoded.append("token", encodedpayload)
 
-    return await Axios.post(`${API}${AUTH.verification}`, urlencoded,{
+    return await Axios.post(`${API}${AUTH.verification}`, urlencoded, {
         headers:{
             "Content-Type": "application/x-www-form-urlencoded"
         }
@@ -123,9 +123,29 @@ const VerificationRequest = async (payload: any) => {
     })
 }
 
+const AddDeviceRequest = async (payload: any) => {
+    const initialpayload = payload.data;
+    const authtoken = payload.token;
+    const encodedpayload = sign(initialpayload, SECRET);
+    const urlencoded = new URLSearchParams()
+    urlencoded.append("token", encodedpayload)
+
+    return await Axios.post(`${API}${POST.adddevice}`, urlencoded, {
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded",
+            "x-access-token": authtoken
+        }
+    }).then((response) => {
+        return response;
+    }).catch((err) => {
+        throw new Error(err);
+    })
+}
+
 export {
     LoginRequest,
     RegisterRequest,
     RefreshAuthRequest,
-    VerificationRequest
+    VerificationRequest,
+    AddDeviceRequest
 }
