@@ -5,11 +5,16 @@ const AUTH = {
     verification: '/auth/verification'
 }
 
+const GET = {
+    getdevices: '/access/getdevices'
+}
+
 const POST = {
     adddevice: '/access/adddevice'
 }
 
 export {
     AUTH,
+    GET,
     POST
 }
