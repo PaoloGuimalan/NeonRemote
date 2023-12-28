@@ -12,10 +12,10 @@ function Feed() {
   const navigate = useNavigate();
 
   const icons: any = {
-    "Devices": <MdDevicesOther style={{fontSize: "80px", color: "#000000"}} />,
-    "MapTracker": <BiMapAlt style={{fontSize: "80px", color: "#000000"}} />,
-    "PeerStorage": <TiCloudStorageOutline style={{fontSize: "80px", color: "#000000"}} />,
-    "Streaming": <CiStreamOn style={{fontSize: "80px", color: "#000000"}} />
+    "Devices": <MdDevicesOther style={{fontSize: "70px", color: "#000000"}} />,
+    "MapTracker": <BiMapAlt style={{fontSize: "70px", color: "#000000"}} />,
+    "PeerStorage": <TiCloudStorageOutline style={{fontSize: "70px", color: "#000000"}} />,
+    "Streaming": <CiStreamOn style={{fontSize: "70px", color: "#000000"}} />
   }
   
   return (
@@ -51,12 +51,12 @@ function Feed() {
             <div className="w-full pb-[20px] pl-[0px] pr-[20px] pt-[10px] justify-center lg:justify-center rounded-[10px] flex flex-row flex-wrap gap-[10px]">
               {featuredisplay.map((mp: any, i: number) => {
                 return(
-                  <div key={i} onClick={() => { navigate(mp.route) }} className='select-none scale-[1] w-full border-[2px] rounded-[10px] border-[#e5e6ea] max-w-[270px] min-h-[170px] bg-transparent cursor-pointer flex flex-col items-center p-[10px] pt-[15px] pb-[20px] gap-[5px]'>
+                  <div key={i} onClick={() => { navigate(mp.route) }} className='select-none scale-[1] w-full border-[2px] rounded-[10px] border-[#e5e6ea] max-w-[270px] min-h-[190px] bg-transparent cursor-pointer flex flex-col items-center p-[10px] pt-[15px] pb-[20px] gap-[5px]'>
                     <div className='flex flex-1 items-center justify-center'>
                       {icons[mp.name.replace(/\s+/g, '')]}
                     </div>
-                    <span className='text-[18px] font-semibold'>{mp.name}</span>
-                    <span className='text-[14px]'>{mp.description}</span>
+                    <span className='text-[16px] font-semibold'>{mp.name}</span>
+                    <span className='text-[12px]'>{mp.description}</span>
                   </div>
                 )
               })}

@@ -14,7 +14,7 @@ import { AuthStateInterface, DeviceInfoInterface, DialogWidgetProp } from "@/hoo
 import DropdownMenuWidget from "./DropdownMenuWidget"
 import { useState } from "react"
 import { deviceMobileOSLabels, deviceMobileOSList, deviceOSLabels, deviceOSList, deviceTypeLabels, deviceTypeList } from "@/hooks/properties"
-import { AddDeviceRequest } from "@/hooks/requests"
+import { AddDeviceRequest, GetDevicesRequest } from "@/hooks/requests"
 import { useToast } from "@/components/ui/use-toast"
 import { useSelector } from "react-redux"
 
@@ -63,6 +63,22 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
       deviceName: newName
     })
   }
+  const GetDevicesProcess = () => {
+    GetDevicesRequest({
+      token: authentication.user.token
+    }).then((response) => {
+      if(!response.data.status){
+        toast({
+          title: response.data.message
+        })
+      }
+    }).catch((err) => {
+      console.log(err);
+      toast({
+        title: err.message
+      })
+    })
+  }
 
   const AddDeviceProcess = () => {
     AddDeviceRequest({
@@ -72,6 +88,7 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
       if(response.data.status){
         setopenDialog(false);
         setdeviceInfo(deviceInfoState);
+        GetDevicesProcess();
         toast({
           title: response.data.message
         })
@@ -97,7 +114,7 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
       }
     }}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-[5px] items-center justify-center">
+        <Button variant="outline" className="gap-[5px] text-[12px] h-[35px] w-[130px] items-center justify-center bg-black text-white hover:bg-black hover:text-white">
             {icon}
             {buttonlabel}
         </Button>

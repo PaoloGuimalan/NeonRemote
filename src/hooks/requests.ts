@@ -1,6 +1,6 @@
 import { Dispatch } from "react"
 import Axios from 'axios'
-import { AUTH, POST } from "./endpoints";
+import { AUTH, GET, POST } from "./endpoints";
 import sign from 'jwt-encode';
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
@@ -142,10 +142,26 @@ const AddDeviceRequest = async (payload: any) => {
     })
 }
 
+const GetDevicesRequest = async (params: any) => {
+    const authtoken = params.token;
+
+    return await Axios.get(`${API}${GET.getdevices}`, {
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded",
+            "x-access-token": authtoken
+        }
+    }).then((response) => {
+        return response;
+    }).catch((err) => {
+        throw new Error(err);
+    })
+}
+
 export {
     LoginRequest,
     RegisterRequest,
     RefreshAuthRequest,
     VerificationRequest,
-    AddDeviceRequest
+    AddDeviceRequest,
+    GetDevicesRequest
 }
