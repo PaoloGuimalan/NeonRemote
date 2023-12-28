@@ -8,7 +8,7 @@ const SECRET = import.meta.env.VITE_JWT_SECRET;
 
 var sseNtfsSource : EventSource | null = null
 
-const SSENotificationsTRequest = (authentication: AuthStateInterface, dispatch: Dispatch<ActionProp>) => {
+const SSENotificationsTRequest = (authentication: AuthStateInterface, _: Dispatch<ActionProp>) => {
     const decodetoken : any = jwt_decode(authentication.user.token);
     const mutateToken = {
         ...decodetoken,
