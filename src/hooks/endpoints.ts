@@ -5,6 +5,11 @@ const AUTH = {
     verification: '/auth/verification'
 }
 
+const POST = {
+    adddevice: '/access/adddevice'
+}
+
 export {
-    AUTH
+    AUTH,
+    POST
 }
