@@ -53,7 +53,74 @@ const featuredisplay = [
   }
 ]
 
+const deviceTypeLabels = {
+  "none": "Please select a device type",
+  "pc": "Personal Computer",
+  "mobile": "Mobile Phone",
+  "embedded": "Embedded Device"
+}
+
+const deviceTypeList = [
+  {
+    value: "pc",
+    label: "Personal Computer"
+  },
+  {
+    value: "mobile",
+    label: "Mobile Phone"
+  },
+  {
+    value: "embedded",
+    label: "Embedded Device"
+  }
+]
+
+const deviceOSLabels = {
+  "none": "Please select an operating system",
+  "windows": "Windows",
+  "mac": "Macintosh",
+  "linux": "Linux"
+}
+
+const deviceOSList = [
+  {
+    value: "windows",
+    label: "Windows"
+  },
+  {
+    value: "mac",
+    label: "Macintosh"
+  },
+  {
+    value: "linux",
+    label: "Linux"
+  }
+]
+
+const deviceMobileOSLabels = {
+  "none": "Please select an operating system",
+  "android": "Android",
+  "ios": "iOS"
+}
+
+const deviceMobileOSList = [
+  {
+    value: "android",
+    label: "Android"
+  },
+  {
+    value: "ios",
+    label: "iOS"
+  }
+]
+
 export {
     reactQuillProperties,
-    featuredisplay
+    featuredisplay,
+    deviceOSLabels,
+    deviceOSList,
+    deviceTypeLabels,
+    deviceTypeList,
+    deviceMobileOSLabels,
+    deviceMobileOSList
 }

@@ -47,3 +47,21 @@ export interface AuthStateInterface{
     auth: boolean | null,
     user: AuthTokenInterface
 }
+
+export interface DialogWidgetProp{
+    buttonlabel: string;
+    icon: any;
+}
+
+export interface DeviceInfoInterface{
+    deviceName: string;
+    deviceType: string;
+    os: string;
+}
+
+export interface DropdownMenuWidgetInterface{
+    position: string;
+    labels: any;
+    list: any[];
+    setPosition: (newType: string) => void;
+}

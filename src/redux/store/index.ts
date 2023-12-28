@@ -1,8 +1,9 @@
 import { createStore, combineReducers } from 'redux'
-import { setauthentication } from '../actions';
+import { setauthentication, setdevicelist } from '../actions';
 
 const combiner = combineReducers({
-    authentication: setauthentication
+    authentication: setauthentication,
+    devicelist: setdevicelist
 })
 
 const store = createStore(combiner)
