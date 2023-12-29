@@ -1,5 +1,5 @@
 import { ActionProp, FetchedDeviceDataInterface } from "@/hooks/interfaces";
-import { SET_AUTHENTICATION, SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_INFO, SET_DEVICE_LIST } from "../types";
+import { SET_AUTHENTICATION, SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_DIRECTORY, SET_DEVICE_DIRNPATH, SET_DEVICE_INFO, SET_DEVICE_LIST } from "../types";
 import { authenticationstate, fetchedDeviceDataState } from "./states";
 
 export const setauthentication = (state = authenticationstate, action: ActionProp) => {
@@ -37,6 +37,22 @@ export const setdeviceinfo = (state : FetchedDeviceDataInterface = fetchedDevice
                 ...state,
                 ...action.payload.deviceinfo
             };
+        case SET_DEVICE_DIRECTORY:
+            return {
+                ...state,
+                files: {
+                    ...state.files,
+                    directory: action.payload.directorypath
+                }
+            }
+        case SET_DEVICE_DIRNPATH:
+            return {
+                ...state,
+                files: {
+                    ...state.files,
+                    ...action.payload.dirnpath
+                }
+            }
         default:
             return state;
     }

@@ -173,6 +173,23 @@ const GetDeviceInfoRequest = async (params: any) => {
     })
 }
 
+const GetDeviceFilesRequest = async (params: any) => {
+    const authtoken = params.token;
+    const deviceparams = params.idwithdir;
+    const encodedparams = sign(deviceparams, SECRET);
+
+    return await Axios.get(`${API}${GET.getdevicefiles}${encodedparams}`, {
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded",
+            "x-access-token": authtoken
+        }
+    }).then((response) => {
+        return response;
+    }).catch((err) => {
+        throw new Error(err);
+    })
+}
+
 export {
     LoginRequest,
     RegisterRequest,
@@ -180,5 +197,6 @@ export {
     VerificationRequest,
     AddDeviceRequest,
     GetDevicesRequest,
-    GetDeviceInfoRequest
+    GetDeviceInfoRequest,
+    GetDeviceFilesRequest
 }

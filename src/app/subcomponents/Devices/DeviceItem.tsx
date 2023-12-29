@@ -1,12 +1,12 @@
 import { AuthStateInterface, FetchedDeviceDataInterface } from '@/hooks/interfaces';
-import { GetDeviceInfoRequest } from '@/hooks/requests';
+import { GetDeviceFilesRequest, GetDeviceInfoRequest } from '@/hooks/requests';
 import { fetchedDeviceDataState } from '@/redux/actions/states';
-import { SET_DEVICE_INFO } from '@/redux/types';
+import { SET_DEVICE_DIRECTORY, SET_DEVICE_INFO } from '@/redux/types';
 import { RiComputerLine } from "react-icons/ri";
 import { RxMobile } from "react-icons/rx";
 import { PiCircuitry } from "react-icons/pi";
-import { IoNotificationsOffOutline } from "react-icons/io5";
-import { CiFileOff } from "react-icons/ci";
+import { IoNotificationsOffOutline, IoRefresh } from "react-icons/io5";
+import { CiFileOff, CiFileOn, CiFolderOn } from "react-icons/ci";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'
@@ -38,8 +38,37 @@ function DeviceItem() {
     })
   }
 
+  const setdirectorypath = (newpath: string) => {
+    dispatch({
+      type: SET_DEVICE_DIRECTORY,
+      payload: {
+        directorypath: newpath
+      }
+    })
+  }
+
+  const GetFilesListProcess = (newpath: string | null) => {
+    GetDeviceFilesRequest({
+      token: authentication.user.token,
+      idwithdir: {
+        deviceID: `DVC_${deviceData.deviceID}`,
+        path: newpath ? newpath : deviceinfo.files.directory
+      }
+    }).then((response: any) => {
+      if(!response.data.status){
+        // toast the error
+        toast({
+          title: response.data.message
+        })
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
   useEffect(() => {
-    GetDeviceInfoProcess()
+    GetDeviceInfoProcess();
+    GetFilesListProcess(null);
   },[counteronsseopen, authentication])
 
   useEffect(() => {
@@ -58,6 +87,11 @@ function DeviceItem() {
     pc: <RiComputerLine style={{fontSize: "27px", color: "#000000"}} />,
     mobile: <RxMobile style={{fontSize: "27px", color: "#000000"}} />,
     embedded: <PiCircuitry style={{fontSize: "27px", color: "#000000"}} />,
+  }
+
+  const diricons: any = {
+    file: <CiFileOn style={{fontSize: "30px", color: "#000000"}} />,
+    folder: <CiFolderOn style={{fontSize: "30px", color: "#000000"}} />
   }
 
   return (
@@ -83,7 +117,7 @@ function DeviceItem() {
                 </div>
                 <div className='w-full flex flex-row gap-[5px] mt-[20px]'>
                   <div className='bg-transparent flex flex-1'>
-                    <input disabled defaultValue={deviceinfo.connectionToken} className='text-black text-[14px] h-[35px] rounded-[5px] bg-black border-[2px] border-white text-[#b3b3b3] select-none w-full pl-[10px] pr-[10px]' />
+                    <input disabled defaultValue={deviceinfo.connectionToken} className='text-[14px] h-[35px] rounded-[5px] bg-black border-[2px] border-white text-[#b3b3b3] select-none w-full pl-[10px] pr-[10px]' />
                   </div>
                   <Button className='h-[35px] text-[12px] bg-white text-black hover:bg-[#f7f7f7] font-semibold'
                     onClick={() => {
@@ -121,12 +155,28 @@ function DeviceItem() {
             </div>
           </div>
           <div className='flex flex-1 gap-[10px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
-              <div className='w-full flex items-start'>
-                <input disabled defaultValue={deviceinfo.files.directory === "" ? "No directory" : deviceinfo.files.directory} className='text-[#333333] font-semibold text-[14px] h-[35px] rounded-[5px] bg-white border-[2px] border-white select-none w-full pl-[10px] pr-[10px]' />
+              <div className='w-full flex items-start gap-[5px]'>
+                <Button onClick={() => { GetFilesListProcess(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
+                  <IoRefresh style={{fontSize: "20px", color: "#4d4d4d"}} />
+                </Button>
+                <input disabled={false} placeholder='No Directory' value={decodeURIComponent(deviceinfo.files.directory)} onChange={(e) => { setdirectorypath(encodeURIComponent(e.target.value)) }} defaultValue={decodeURIComponent(deviceinfo.files.directory)} className='text-[#333333] font-semibold text-[14px] h-[35px] rounded-[5px] bg-white border-[2px] border-white select-none w-full pl-[10px] pr-[10px]' />
               </div>
               {deviceinfo.files.list.length > 0 ? (
-                <div className='w-full bg-white flex flex-row flex-wrap flex-1 rounded-[5px] overflow-y-scroll x-scroll'>
-                  {/* files list here */}
+                <div className='w-full bg-white flex flex-row flex-1 rounded-[5px] overflow-y-scroll x-scroll'>
+                  <div className='select-none w-full h-fit flex flex-row flex-wrap gap-[10px] items-start justify-start p-[10px]'>
+                    {deviceinfo.files.list.map((mp: any, i: number) => {
+                      return(
+                        <div key={i}  onClick={() => { 
+                          if(mp.type === "folder"){
+                            GetFilesListProcess(`${mp.path}`)
+                          } 
+                        }} title={mp.filename} className='bg-transparent hover:bg-[#b3b3b3] rounded-[5px] cursor-pointer p-[10px] w-full max-w-[100px] h-[80px] max-h-[100px] flex flex-col gap-[10px] items-center justify-end'>
+                          {diricons[mp.type]}
+                          <span className='w-full text-ellipsis truncate overflow-hidden text-[12px]'>{mp.filename}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               ) : (
                 <div className='w-full bg-white flex flex-col flex-wrap flex-1 rounded-[5px] items-center justify-center'>
