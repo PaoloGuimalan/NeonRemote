@@ -6,7 +6,8 @@ const AUTH = {
 }
 
 const GET = {
-    getdevices: '/access/getdevices'
+    getdevices: '/access/getdevices',
+    getdeviceinfo: '/access/getdeviceinfo/'
 }
 
 const POST = {

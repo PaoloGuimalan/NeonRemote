@@ -53,7 +53,7 @@ const featuredisplay = [
   }
 ]
 
-const deviceTypeLabels = {
+const deviceTypeLabels : any = {
   "none": "Please select a device type",
   "pc": "Personal Computer",
   "mobile": "Mobile Phone",
@@ -75,7 +75,7 @@ const deviceTypeList = [
   }
 ]
 
-const deviceOSLabels = {
+const deviceOSLabels : any = {
   "none": "Please select an operating system",
   "windows": "Windows",
   "mac": "Macintosh",
@@ -97,7 +97,7 @@ const deviceOSList = [
   }
 ]
 
-const deviceMobileOSLabels = {
+const deviceMobileOSLabels : any = {
   "none": "Please select an operating system",
   "android": "Android",
   "ios": "iOS"

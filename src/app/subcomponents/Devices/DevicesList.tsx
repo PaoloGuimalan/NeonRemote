@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 function DevicesList() {
 
+  const counteronsseopen: number = useSelector((state: any) => state.counteronsseopen);
   const authentication: AuthStateInterface = useSelector((state: any) => state.authentication);
   const devicelist: any[] = useSelector((state: any) => state.devicelist);
 
@@ -38,7 +39,7 @@ function DevicesList() {
 
   useEffect(() => {
     GetDevicesProcess();
-  }, [authentication])
+  }, [authentication, counteronsseopen])
 
   const devicelisticons: any = {
     pc: <RiComputerLine style={{fontSize: "27px", color: "#000000"}} />,

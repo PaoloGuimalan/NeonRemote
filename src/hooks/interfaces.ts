@@ -65,3 +65,22 @@ export interface DropdownMenuWidgetInterface{
     list: any[];
     setPosition: (newType: string) => void;
 }
+
+export interface FetchedDeviceDataInterface{
+    deviceID: string;
+    deviceName: string;
+    type: string;
+    os: string;
+    connectionToken: string;
+    dateAdded: {
+        date: string;
+        time: string;
+    }
+    isActivated: boolean;
+    isMounted: boolean;
+    notifications: any[];
+    files: {
+        directory: string;
+        list: any[];
+    };
+}
