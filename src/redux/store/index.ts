@@ -1,9 +1,11 @@
 import { createStore, combineReducers } from 'redux'
-import { setauthentication, setdevicelist } from '../actions';
+import { setauthentication, setcounteronsseopen, setdeviceinfo, setdevicelist } from '../actions';
 
 const combiner = combineReducers({
     authentication: setauthentication,
-    devicelist: setdevicelist
+    counteronsseopen: setcounteronsseopen,
+    devicelist: setdevicelist,
+    deviceinfo: setdeviceinfo
 })
 
 const store = createStore(combiner)

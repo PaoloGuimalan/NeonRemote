@@ -1,3 +1,5 @@
+import { FetchedDeviceDataInterface } from "@/hooks/interfaces"
+
 export const authenticationstate = {
     auth: null,
     user: {
@@ -19,3 +21,22 @@ export const authenticationstate = {
         isVerified: false
     }
 }
+
+export const fetchedDeviceDataState: FetchedDeviceDataInterface = {
+    deviceID: "",
+    deviceName: "",
+    type: "",
+    os: "",
+    connectionToken: "",
+    dateAdded: {
+        date: "",
+        time: "",
+    },
+    isActivated: true,
+    isMounted: false,
+    notifications: [],
+    files: {
+        directory: "",
+        list: []
+    }
+  }
