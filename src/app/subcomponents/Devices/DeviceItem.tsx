@@ -186,41 +186,62 @@ function DeviceItem() {
               )}
             </div>
           </div>
-          <div className='flex flex-1 gap-[10px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
-              <div className='w-full flex items-start gap-[5px]'>
-                <Button onClick={() => { GoBackDirectory(decodeURIComponent(deviceinfo.files.directory)) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
-                  <IoChevronBack style={{fontSize: "20px", color: "#4d4d4d"}} />
-                </Button>
-                <Button onClick={() => { GetFilesListProcess(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
-                  <IoRefresh style={{fontSize: "20px", color: "#4d4d4d"}} />
-                </Button>
-                <input disabled={false} placeholder='No Directory' value={decodeURIComponent(deviceinfo.files.directory)} onChange={(e) => { setdirectorypath(encodeURIComponent(e.target.value)) }} defaultValue={decodeURIComponent(deviceinfo.files.directory)} className='text-[#333333] font-semibold text-[14px] h-[35px] rounded-[5px] bg-white border-[2px] border-white select-none w-full pl-[10px] pr-[10px]' />
+          <div className='flex flex-col flex-1 bg-transparent gap-[20px]'>
+            <div className='flex flex-0 gap-[10px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
+                <div className='w-full flex items-start gap-[5px]'>
+                  <Button onClick={() => { GoBackDirectory(decodeURIComponent(deviceinfo.files.directory)) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
+                    <IoChevronBack style={{fontSize: "20px", color: "#4d4d4d"}} />
+                  </Button>
+                  <Button onClick={() => { GetFilesListProcess(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
+                    <IoRefresh style={{fontSize: "20px", color: "#4d4d4d"}} />
+                  </Button>
+                  <input disabled={false} placeholder='No Directory' value={decodeURIComponent(deviceinfo.files.directory)} onChange={(e) => { setdirectorypath(encodeURIComponent(e.target.value)) }} defaultValue={decodeURIComponent(deviceinfo.files.directory)} className='text-[#333333] font-semibold text-[14px] h-[35px] rounded-[5px] bg-white border-[2px] border-white select-none w-full pl-[10px] pr-[10px]' />
+                </div>
+                {deviceinfo.files.list.length > 0 ? (
+                  <div className='w-full bg-white flex flex-row flex-1 rounded-[5px] overflow-y-scroll x-scroll'>
+                    <div className='select-none w-full h-fit flex flex-row flex-wrap gap-[10px] items-start justify-start p-[10px]'>
+                      {deviceinfo.files.list.map((mp: any, i: number) => {
+                        return(
+                          <div key={i}  onClick={() => { 
+                            if(mp.type === "folder"){
+                              GetFilesListProcess(`${mp.path}`)
+                            } 
+                          }} title={mp.filename} className='bg-transparent hover:bg-[#b3b3b3] rounded-[5px] cursor-pointer p-[10px] w-full max-w-[100px] h-[80px] max-h-[100px] flex flex-col gap-[10px] items-center justify-end'>
+                            {diricons[mp.type]}
+                            <span className='w-full text-ellipsis truncate overflow-hidden text-[12px]'>{mp.filename}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className='w-full bg-white flex flex-col flex-wrap flex-1 rounded-[5px] items-center justify-center'>
+                    <div className='flex flex-col items-center gap-[10px]'>
+                      <CiFileOff style={{fontSize: "35px", color: "#4d4d4d"}} />
+                      <span className='text-[13px] text-[#4d4d4d]'>No files</span>
+                    </div>
+                  </div>
+                )}
+            </div>
+            <div className='flex flex-0 gap-[0px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
+              <div className='select-none w-full flex items-start gap-[5px] bg-black max-w-[180px] p-[10px] border-b-[1px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]'>
+                <span className='text-white text-[14px] font-semibold'>Command Prompt</span>
               </div>
-              {deviceinfo.files.list.length > 0 ? (
-                <div className='w-full bg-white flex flex-row flex-1 rounded-[5px] overflow-y-scroll x-scroll'>
-                  <div className='select-none w-full h-fit flex flex-row flex-wrap gap-[10px] items-start justify-start p-[10px]'>
-                    {deviceinfo.files.list.map((mp: any, i: number) => {
-                      return(
-                        <div key={i}  onClick={() => { 
-                          if(mp.type === "folder"){
-                            GetFilesListProcess(`${mp.path}`)
-                          } 
-                        }} title={mp.filename} className='bg-transparent hover:bg-[#b3b3b3] rounded-[5px] cursor-pointer p-[10px] w-full max-w-[100px] h-[80px] max-h-[100px] flex flex-col gap-[10px] items-center justify-end'>
-                          {diricons[mp.type]}
-                          <span className='w-full text-ellipsis truncate overflow-hidden text-[12px]'>{mp.filename}</span>
-                        </div>
-                      )
-                    })}
+              <div className='w-full flex flex-row flex-1 rounded-[5px] rounded-tl-[0px] overflow-y-scroll x-scroll bg-black'>
+                  <div className='w-full h-fit flex flex-col flex-wrap gap-[20px] items-start justify-start p-[20px]'>
+                    <div className='flex flex-col items-start bg-transparent'>
+                      <span className='text-white text-[14px] font-semibold'>Neon Remote <sup className='font-normal'>powered by Neon Service</sup></span>
+                      <span className='text-white text-[12px]'>Accessing device <span className='font-semibold'>{deviceinfo.deviceName}</span></span>
+                    </div>
+                    <div className='bg-transparent w-full flex flex-col items-start gap-[5px] justify-center'>
+                      <div className='flex flex-row gap-[10px] w-full items-start'>
+                        <span className='text-[14px] text-white flex justify-center items-center font-semibold'>{deviceinfo.deviceName} &gt;</span>
+                        <p contentEditable className='text-white text-[14px] flex flex-wrap flex-1 text-left text-wrap break-all mt-[1px] outline-none'></p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className='w-full bg-white flex flex-col flex-wrap flex-1 rounded-[5px] items-center justify-center'>
-                  <div className='flex flex-col items-center gap-[10px]'>
-                    <CiFileOff style={{fontSize: "35px", color: "#4d4d4d"}} />
-                    <span className='text-[13px] text-[#4d4d4d]'>No files</span>
-                  </div>
-                </div>
-              )}
+              </div>
+            </div>
           </div>
         </div>
     </div>
