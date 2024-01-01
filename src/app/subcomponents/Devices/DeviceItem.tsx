@@ -76,23 +76,23 @@ function DeviceItem() {
           protopatharray.splice(-1)
           var finalpath = protopatharray.join("\\");
           if(finalpath.includes("\\")){
-            GetFilesListProcess(finalpath);
+            GetFilesListProcess(encodeURIComponent(finalpath));
           }
           else{
-            GetFilesListProcess(`${finalpath}\\`);
+            GetFilesListProcess(encodeURIComponent(`${finalpath}\\`));
           }
         }
         else{
-          GetFilesListProcess(protopatharray.join("\\"));
+          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
         }
       }
       else{
         if(protopatharray.length > 2){
           protopatharray.splice(-2, 1);
-          GetFilesListProcess(protopatharray.join("\\"));
+          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
         }
         else{
-          GetFilesListProcess(protopatharray.join("\\"));
+          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
         }
       }
     }
@@ -188,7 +188,7 @@ function DeviceItem() {
           </div>
           <div className='flex flex-1 gap-[10px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
               <div className='w-full flex items-start gap-[5px]'>
-                <Button onClick={() => { GoBackDirectory(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
+                <Button onClick={() => { GoBackDirectory(decodeURIComponent(deviceinfo.files.directory)) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
                   <IoChevronBack style={{fontSize: "20px", color: "#4d4d4d"}} />
                 </Button>
                 <Button onClick={() => { GetFilesListProcess(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
