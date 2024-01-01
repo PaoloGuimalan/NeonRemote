@@ -5,7 +5,7 @@ import { SET_DEVICE_DIRECTORY, SET_DEVICE_INFO } from '@/redux/types';
 import { RiComputerLine } from "react-icons/ri";
 import { RxMobile } from "react-icons/rx";
 import { PiCircuitry } from "react-icons/pi";
-import { IoNotificationsOffOutline, IoRefresh } from "react-icons/io5";
+import { IoNotificationsOffOutline, IoRefresh, IoChevronBack } from "react-icons/io5";
 import { CiFileOff, CiFileOn, CiFolderOn } from "react-icons/ci";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,6 +64,38 @@ function DeviceItem() {
     }).catch((err) => {
       console.log(err);
     })
+  }
+
+  const GoBackDirectory = (oldpath: string | null) => {
+    if(oldpath){
+      var protopatharray = [...oldpath.split("\\")];
+      if(protopatharray[protopatharray.length - 1] !== ''){
+        protopatharray.push("\\");
+        if(protopatharray.length > 2){
+          protopatharray.splice(-2, 1);
+          protopatharray.splice(-1)
+          var finalpath = protopatharray.join("\\");
+          if(finalpath.includes("\\")){
+            GetFilesListProcess(finalpath);
+          }
+          else{
+            GetFilesListProcess(`${finalpath}\\`);
+          }
+        }
+        else{
+          GetFilesListProcess(protopatharray.join("\\"));
+        }
+      }
+      else{
+        if(protopatharray.length > 2){
+          protopatharray.splice(-2, 1);
+          GetFilesListProcess(protopatharray.join("\\"));
+        }
+        else{
+          GetFilesListProcess(protopatharray.join("\\"));
+        }
+      }
+    }
   }
 
   useEffect(() => {
@@ -156,6 +188,9 @@ function DeviceItem() {
           </div>
           <div className='flex flex-1 gap-[10px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
               <div className='w-full flex items-start gap-[5px]'>
+                <Button onClick={() => { GoBackDirectory(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
+                  <IoChevronBack style={{fontSize: "20px", color: "#4d4d4d"}} />
+                </Button>
                 <Button onClick={() => { GetFilesListProcess(deviceinfo.files.directory) }} className='h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center'>
                   <IoRefresh style={{fontSize: "20px", color: "#4d4d4d"}} />
                 </Button>
