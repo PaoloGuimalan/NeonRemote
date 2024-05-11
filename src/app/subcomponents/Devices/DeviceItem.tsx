@@ -67,32 +67,65 @@ function DeviceItem() {
   }
 
   const GoBackDirectory = (oldpath: string | null) => {
-    if(oldpath){
-      var protopatharray = [...oldpath.split("\\")];
-      if(protopatharray[protopatharray.length - 1] !== ''){
-        protopatharray.push("\\");
-        if(protopatharray.length > 2){
-          protopatharray.splice(-2, 1);
-          protopatharray.splice(-1)
-          var finalpath = protopatharray.join("\\");
-          if(finalpath.includes("\\")){
-            GetFilesListProcess(encodeURIComponent(finalpath));
+    if(deviceinfo.os === "windows"){
+      if(oldpath){
+        var protopatharray = [...oldpath.split("\\")];
+        if(protopatharray[protopatharray.length - 1] !== ''){
+          protopatharray.push("\\");
+          if(protopatharray.length > 2){
+            protopatharray.splice(-2, 1);
+            protopatharray.splice(-1)
+            var finalpath = protopatharray.join("\\");
+            if(finalpath.includes("\\")){
+              GetFilesListProcess(encodeURIComponent(finalpath));
+            }
+            else{
+              GetFilesListProcess(encodeURIComponent(`${finalpath}\\`));
+            }
           }
           else{
-            GetFilesListProcess(encodeURIComponent(`${finalpath}\\`));
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
           }
         }
         else{
-          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
+          if(protopatharray.length > 2){
+            protopatharray.splice(-2, 1);
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
+          }
+          else{
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
+          }
         }
       }
-      else{
-        if(protopatharray.length > 2){
-          protopatharray.splice(-2, 1);
-          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
+    }
+    else if (deviceinfo.os === "linux"){
+      if(oldpath){
+        var protopatharray = [...oldpath.split("/")];
+        if(protopatharray[protopatharray.length - 1] !== ''){
+          protopatharray.push("/");
+          if(protopatharray.length > 2){
+            protopatharray.splice(-2, 1);
+            protopatharray.splice(-1)
+            var finalpath = protopatharray.join("/");
+            if(finalpath.includes("/")){
+              GetFilesListProcess(encodeURIComponent(finalpath));
+            }
+            else{
+              GetFilesListProcess(encodeURIComponent(`${finalpath}/`));
+            }
+          }
+          else{
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("/")));
+          }
         }
         else{
-          GetFilesListProcess(encodeURIComponent(protopatharray.join("\\")));
+          if(protopatharray.length > 2){
+            protopatharray.splice(-2, 1);
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("/")));
+          }
+          else{
+            GetFilesListProcess(encodeURIComponent(protopatharray.join("/")));
+          }
         }
       }
     }
@@ -136,9 +169,10 @@ function DeviceItem() {
         </div>
         <div className='bg-transparent w-full flex flex-row flex-wrap gap-[10px]'>
           <div className='w-full max-w-[300px] flex flex-col gap-[10px]'>
-            <div className='w-full max-h-[240px] bg-black text-white rounded-[5px] p-[20px] flex flex-col items-start gap-[10px]'>
-              <div className='w-full flex flex-row gap-[10px]'>
+            <div className='w-full max-h-[270px] bg-black text-white rounded-[5px] p-[20px] flex flex-col items-start gap-[2px]'>
+              <div className='w-full flex flex-col items-start gap-[4px]'>
                 <span className='font-semibold text-[16px]'>{deviceinfo.deviceID}</span>
+                <span className='font-semibold text-[16px]'>{authentication.user.userID}</span>
               </div>
               <div className='w-full flex flex-col items-start gap-[0px]'>
                 <div className='w-full flex flex-row gap-[10px]'>
@@ -203,9 +237,16 @@ function DeviceItem() {
                       {deviceinfo.files.list.map((mp: any, i: number) => {
                         return(
                           <div key={i}  onClick={() => { 
-                            if(mp.type === "folder"){
-                              GetFilesListProcess(`${mp.path}`)
-                            } 
+                            if(deviceinfo.os === "windows"){
+                              if(mp.type === "folder"){
+                                GetFilesListProcess(`${mp.path}`);
+                              } 
+                            }
+                            else if(deviceinfo.os === "linux"){
+                              if(mp.type === "folder"){
+                                GetFilesListProcess(`${mp.path.replaceAll("\\", "/")}`);
+                              } 
+                            }
                           }} title={mp.filename} className='bg-transparent hover:bg-[#b3b3b3] rounded-[5px] cursor-pointer p-[10px] w-full max-w-[100px] h-[80px] max-h-[100px] flex flex-col gap-[10px] items-center justify-end'>
                             {diricons[mp.type]}
                             <span className='w-full text-ellipsis truncate overflow-hidden text-[12px]'>{mp.filename}</span>
@@ -231,7 +272,7 @@ function DeviceItem() {
                   <div className='w-full h-fit flex flex-col flex-wrap gap-[20px] items-start justify-start p-[20px]'>
                     <div className='flex flex-col items-start bg-transparent'>
                       <span className='text-white text-[14px] font-semibold'>Neon Remote <sup className='font-normal'>powered by Neon Service</sup></span>
-                      <span className='text-white text-[12px]'>Accessing device <span className='font-semibold'>{deviceinfo.deviceName}</span></span>
+                      <span className='text-white text-[12px]'>Accessing device <span className='font-semibold'>{deviceinfo.deviceName} @ {decodeURIComponent(deviceinfo.files.directory)}</span></span>
                     </div>
                     <div className='bg-transparent w-full flex flex-col items-start gap-[5px] justify-center'>
                       <div className='flex flex-row gap-[10px] w-full items-start'>
