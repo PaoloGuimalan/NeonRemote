@@ -12,6 +12,7 @@ import Verification from './app/auth/Verification';
 import { Toaster } from './components/ui/toaster';
 import { RefreshAuthRequest } from './hooks/requests';
 import { useToast } from './components/ui/use-toast';
+import Default from './app/home/Default';
 // import Register from './app/auth/Register'
 
 function App() {
@@ -116,7 +117,7 @@ function App() {
   }
 
   useEffect(() => {
-    initAuthentication()
+    initAuthentication();
   }, [])
   
 
@@ -126,10 +127,10 @@ function App() {
         <Toaster />
       </div>
       <Routes>
-        <Route path='/*' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Home /> : <Navigate to={'/verify'} /> : <Navigate to={'/login'} /> : null} />
-        <Route path='/login' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Login /> : null} />
-        <Route path='/register' element={authentication.auth != null? authentication.auth?  authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Register /> : null} />
-        <Route path='/verify' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Verification /> : <Navigate to={'/login'} /> : null} />
+        <Route path='/*' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Home /> : <Navigate to={'/verify'} /> : <Navigate to={'/login'} /> : <Default />} />
+        <Route path='/login' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Login /> : <Default />} />
+        <Route path='/register' element={authentication.auth != null? authentication.auth?  authentication.user.isVerified? <Navigate to={'/'} /> : <Navigate to={'/verify'} /> : <Register /> : <Default />} />
+        <Route path='/verify' element={authentication.auth != null? authentication.auth? authentication.user.isVerified? <Navigate to={'/'} /> : <Verification /> : <Navigate to={'/login'} /> : <Default />} />
       </Routes>
     </div>
   )
