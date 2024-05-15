@@ -133,8 +133,15 @@ function DeviceItem() {
 
   useEffect(() => {
     GetDeviceInfoProcess();
-    GetFilesListProcess(null);
-  },[counteronsseopen, authentication])
+    
+    if(deviceinfo.os === "linux"){
+      GetFilesListProcess("/");
+    }
+    else if(deviceinfo.os === "windows"){
+      GetFilesListProcess("C:\\");
+    }
+
+  },[counteronsseopen, authentication, deviceinfo.os])
 
   useEffect(() => {
 
