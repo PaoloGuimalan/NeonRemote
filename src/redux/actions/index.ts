@@ -62,8 +62,8 @@ export const setsystemlogs = (state: SystemLogsItem[] = [], action: ActionProp) 
     switch(action.type){
         case SET_SYSTEM_LOGS:
             return [
-                ...state.reverse(),
                 action.payload.newlog,
+                ...state.reverse()
             ];
         default:
             return state.reverse();
