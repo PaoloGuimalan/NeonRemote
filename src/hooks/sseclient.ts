@@ -123,7 +123,9 @@ const SSENotificationsTRequest = (authentication: AuthStateInterface, dispatch: 
     sseNtfsSource.addEventListener('devicesystemlogs', (e) => {
         const parsedresponse = JSON.parse(e.data)
         if(parsedresponse.status){
-            const decodedResult: any = jwt_decode(parsedresponse.result)
+            const decodedResult: any = jwt_decode(parsedresponse.result);
+
+            // console.log(decodedResult.data);
 
             dispatch({
                 type: SET_SYSTEM_LOGS,

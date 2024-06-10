@@ -326,22 +326,24 @@ function DeviceItem() {
               )}
               {currentworkshoptab === "system_logs" && (
                 <div className='w-full flex flex-row flex-1 rounded-[5px] rounded-tl-[0px] overflow-y-scroll x-scroll bg-black'>
-                  <div className='w-full h-fit flex flex-col flex-wrap gap-[5px] items-start justify-start p-[20px]'>
-                    <div className='flex flex-row items-start bg-white w-full gap-[5px]'>
-                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
-                        <span className='text-black text-[14px] font-semibold'>Time</span>
-                      </div>
-                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
-                        <span className='text-black text-[14px] font-semibold'>Status</span>
-                      </div>
-                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
-                        <span className='text-black text-[14px] font-semibold'>Host</span>
-                      </div>
-                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
-                        <span className='text-black text-[14px] font-semibold'>Request</span>
-                      </div>
-                      <div className='p-[10px] flex flex-1 justify-center'>
-                        <span className='text-black text-[14px] font-semibold'>Data</span>
+                  <div className='w-full h-fit flex flex-col flex-wrap gap-[5px] items-start justify-start p-[20px] pt-[0px]'>
+                    <div className='w-full sticky top-0 pt-[20px] bg-black'>
+                      <div className='flex flex-row items-start bg-white w-full gap-[5px]'>
+                        <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                          <span className='text-black text-[14px] font-semibold'>Time</span>
+                        </div>
+                        <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                          <span className='text-black text-[14px] font-semibold'>Status</span>
+                        </div>
+                        <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                          <span className='text-black text-[14px] font-semibold'>Request</span>
+                        </div>
+                        <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                          <span className='text-black text-[14px] font-semibold'>Host</span>
+                        </div>
+                        <div className='p-[10px] flex flex-1 justify-center'>
+                          <span className='text-black text-[14px] font-semibold'>Data</span>
+                        </div>
                       </div>
                     </div>
                     <div className='bg-transparent w-full flex flex-col items-start gap-[2px] justify-center'>
@@ -351,17 +353,17 @@ function DeviceItem() {
                             <div className='p-[10px] flex flex-1 max-w-[170px]'>
                               <span className='text-white text-[12px]'>{item.time}</span>
                             </div>
-                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                            <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
                               <span className='text-white text-[12px]'>{item.status}</span>
                             </div>
-                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
-                              <span className='text-white text-[12px]'>{item.host}</span>
-                            </div>
-                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                            <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
                               <span className='text-white text-[12px]'>{item.request}</span>
                             </div>
-                            <div className='p-[10px] flex flex-1'>
-                              <span className='text-white text-[12px]'>{JSON.stringify(item.data, null, 4)}</span>
+                            <div className='p-[10px] flex flex-1 max-w-[200px] h-fit break-all'>
+                              <span className='text-white text-[12px] text-left'>{item.host}</span>
+                            </div>
+                            <div className='p-[10px] flex flex-1 flex-wrap h-fit word-break justify-center'>
+                              <span className='text-white text-[12px] break-all'>{JSON.stringify(item.data, null, 4)}</span>
                             </div>
                           </div>
                         )
