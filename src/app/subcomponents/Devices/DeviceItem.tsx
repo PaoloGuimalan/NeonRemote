@@ -1,4 +1,4 @@
-import { AuthStateInterface, FetchedDeviceDataInterface } from '@/hooks/interfaces';
+import { AuthStateInterface, FetchedDeviceDataInterface, SystemLogsItem } from '@/hooks/interfaces';
 import { GetDeviceFilesRequest, GetDeviceInfoRequest } from '@/hooks/requests';
 import { fetchedDeviceDataState } from '@/redux/actions/states';
 import { SET_DEVICE_DIRECTORY, SET_DEVICE_INFO } from '@/redux/types';
@@ -7,12 +7,13 @@ import { RxMobile } from "react-icons/rx";
 import { PiCircuitry } from "react-icons/pi";
 import { IoNotificationsOffOutline, IoRefresh, IoChevronBack } from "react-icons/io5";
 import { CiFileOff, CiFileOn, CiFolderOn } from "react-icons/ci";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'
 import { deviceMobileOSLabels, deviceOSLabels, deviceTypeLabels } from '@/hooks/properties';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { motion } from 'framer-motion';
 
 function DeviceItem() {
 
@@ -21,6 +22,9 @@ function DeviceItem() {
   const counteronsseopen: number = useSelector((state: any) => state.counteronsseopen);
   const authentication: AuthStateInterface = useSelector((state: any) => state.authentication);
   const deviceinfo: FetchedDeviceDataInterface = useSelector((state: any) => state.deviceinfo);
+  const systemlogs: SystemLogsItem[] = useSelector((state: any) => state.systemlogs);
+
+  const [currentworkshoptab, setcurrentworkshoptab] = useState<string>("command_prompt");
 
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -272,10 +276,40 @@ function DeviceItem() {
                 )}
             </div>
             <div className='flex flex-0 gap-[0px] flex-col items-start h-[600px] bg-[#e6e6e6] rounded-[5px] p-[20px]'>
-              <div className='select-none w-full flex items-start gap-[5px] bg-black max-w-[180px] p-[10px] border-b-[1px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]'>
-                <span className='text-white text-[14px] font-semibold'>Command Prompt</span>
+              <div className='w-full flex flex-row overflow-x-auto'>
+                <motion.button
+                initial={{
+                  backgroundColor: currentworkshoptab === "command_prompt" ? "black" : "#3e3e3e",
+                  color: currentworkshoptab === "command_prompt" ? "white" : "#d9d9d9",
+                }}
+                animate={{
+                  backgroundColor: currentworkshoptab === "command_prompt" ? "black" : "#3e3e3e",
+                  color: currentworkshoptab === "command_prompt" ? "white" : "#d9d9d9",
+                }}
+                onClick={() => {
+                  setcurrentworkshoptab("command_prompt");
+                }}
+                className='select-none w-full flex items-start gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]'>
+                  <span className='text-[14px] font-semibold'>Command Prompt</span>
+                </motion.button>
+                <motion.button
+                initial={{
+                  backgroundColor: currentworkshoptab === "system_logs" ? "black" : "#3e3e3e",
+                  color: currentworkshoptab === "system_logs" ? "white" : "#d9d9d9",
+                }}
+                animate={{
+                  backgroundColor: currentworkshoptab === "system_logs" ? "black" : "#3e3e3e",
+                  color: currentworkshoptab === "system_logs" ? "white" : "#d9d9d9",
+                }}
+                onClick={() => {
+                  setcurrentworkshoptab("system_logs");
+                }}
+                className='select-none w-full flex items-start gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]'>
+                  <span className='text-[14px] font-semibold'>System Logs</span>
+                </motion.button>
               </div>
-              <div className='w-full flex flex-row flex-1 rounded-[5px] rounded-tl-[0px] overflow-y-scroll x-scroll bg-black'>
+              {currentworkshoptab === "command_prompt" && (
+                <div className='w-full flex flex-row flex-1 rounded-[5px] rounded-tl-[0px] overflow-y-scroll x-scroll bg-black'>
                   <div className='w-full h-fit flex flex-col flex-wrap gap-[20px] items-start justify-start p-[20px]'>
                     <div className='flex flex-col items-start bg-transparent'>
                       <span className='text-white text-[14px] font-semibold'>Neon Remote <sup className='font-normal'>powered by Neon Service</sup></span>
@@ -288,7 +322,54 @@ function DeviceItem() {
                       </div>
                     </div>
                   </div>
-              </div>
+                </div>
+              )}
+              {currentworkshoptab === "system_logs" && (
+                <div className='w-full flex flex-row flex-1 rounded-[5px] rounded-tl-[0px] overflow-y-scroll x-scroll bg-black'>
+                  <div className='w-full h-fit flex flex-col flex-wrap gap-[5px] items-start justify-start p-[20px]'>
+                    <div className='flex flex-row items-start bg-white w-full gap-[5px]'>
+                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                        <span className='text-black text-[14px] font-semibold'>Time</span>
+                      </div>
+                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                        <span className='text-black text-[14px] font-semibold'>Status</span>
+                      </div>
+                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                        <span className='text-black text-[14px] font-semibold'>Host</span>
+                      </div>
+                      <div className='p-[10px] flex flex-1 max-w-[170px] justify-center'>
+                        <span className='text-black text-[14px] font-semibold'>Request</span>
+                      </div>
+                      <div className='p-[10px] flex flex-1 justify-center'>
+                        <span className='text-black text-[14px] font-semibold'>Data</span>
+                      </div>
+                    </div>
+                    <div className='bg-transparent w-full flex flex-col items-start gap-[2px] justify-center'>
+                      {systemlogs.filter((flt: SystemLogsItem) => flt.deviceID === deviceinfo.deviceID).map((item: SystemLogsItem, i: number) => {
+                        return(
+                          <div key={i} className='flex flex-row items-start bg-[#262626] w-full gap-[5px]'>
+                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                              <span className='text-white text-[12px]'>{item.time}</span>
+                            </div>
+                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                              <span className='text-white text-[12px]'>{item.status}</span>
+                            </div>
+                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                              <span className='text-white text-[12px]'>{item.host}</span>
+                            </div>
+                            <div className='p-[10px] flex flex-1 max-w-[170px]'>
+                              <span className='text-white text-[12px]'>{item.request}</span>
+                            </div>
+                            <div className='p-[10px] flex flex-1'>
+                              <span className='text-white text-[12px]'>{JSON.stringify(item.data, null, 4)}</span>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

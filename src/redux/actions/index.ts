@@ -1,5 +1,5 @@
-import { ActionProp, FetchedDeviceDataInterface } from "@/hooks/interfaces";
-import { SET_AUTHENTICATION, SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_DIRECTORY, SET_DEVICE_DIRNPATH, SET_DEVICE_INFO, SET_DEVICE_LIST } from "../types";
+import { ActionProp, FetchedDeviceDataInterface, SystemLogsItem } from "@/hooks/interfaces";
+import { SET_AUTHENTICATION, SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_DIRECTORY, SET_DEVICE_DIRNPATH, SET_DEVICE_INFO, SET_DEVICE_LIST, SET_SYSTEM_LOGS } from "../types";
 import { authenticationstate, fetchedDeviceDataState } from "./states";
 
 export const setauthentication = (state = authenticationstate, action: ActionProp) => {
@@ -55,5 +55,17 @@ export const setdeviceinfo = (state : FetchedDeviceDataInterface = fetchedDevice
             }
         default:
             return state;
+    }
+}
+
+export const setsystemlogs = (state: SystemLogsItem[] = [], action: ActionProp) => {
+    switch(action.type){
+        case SET_SYSTEM_LOGS:
+            return [
+                ...action.payload.newlog,
+                ...state.reverse()
+            ];
+        default:
+            return state.reverse();
     }
 }

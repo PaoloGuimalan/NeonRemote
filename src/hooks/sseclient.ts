@@ -2,7 +2,7 @@ import sign from 'jwt-encode'
 import { Dispatch } from 'redux';
 import { ActionProp, AuthStateInterface } from './interfaces';
 import jwt_decode from 'jwt-decode'
-import { SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_DIRNPATH, SET_DEVICE_INFO, SET_DEVICE_LIST } from '@/redux/types';
+import { SET_COUNTER_ON_SSE_OPEN, SET_DEVICE_DIRNPATH, SET_DEVICE_INFO, SET_DEVICE_LIST, SET_SYSTEM_LOGS } from '@/redux/types';
 
 const API = import.meta.env.VITE_NEON_AI_API;
 const SECRET = import.meta.env.VITE_JWT_SECRET;
@@ -115,6 +115,20 @@ const SSENotificationsTRequest = (authentication: AuthStateInterface, dispatch: 
                         directory: decodedResult.data.path,
                         list: devicefileslistdata,
                     }
+                }
+            })
+        }
+    })
+
+    sseNtfsSource.addEventListener('devicesystemlogs', (e) => {
+        const parsedresponse = JSON.parse(e.data)
+        if(parsedresponse.status){
+            const decodedResult: any = jwt_decode(parsedresponse.result)
+
+            dispatch({
+                type: SET_SYSTEM_LOGS,
+                payload: {
+                    newlog: decodedResult.data
                 }
             })
         }

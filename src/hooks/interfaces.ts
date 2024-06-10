@@ -84,3 +84,12 @@ export interface FetchedDeviceDataInterface{
         list: any[];
     };
 }
+
+export interface SystemLogsItem {
+    deviceID: string;
+    time: string;
+    status: number;
+    host: string;
+    request: string;
+    data: string;
+}

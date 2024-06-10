@@ -114,6 +114,57 @@ const deviceMobileOSList = [
   }
 ]
 
+const samplesystemlogs = [
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  },
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  },
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  },
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  },
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  },
+  {
+    "deviceID": "DVC_47930993506265148139",
+    "time": "JUN 06 2024",
+    "status": 200,
+    "host": "www.sample.com",
+    "request": "/api",
+    "data": "{\r\n  \"result\": [\r\n    {\r\n      \"status\": \"active\",\r\n      \"name\": {\r\n        \"first\": \"Chad\",\r\n        \"middle\": \"Arden\",\r\n        \"last\": \"Labadie\"\r\n      },\r\n      \"username\": \"Chad-Labadie\",\r\n      \"password\": \"7swiP9AGU1yE118\",\r\n      \"emails\": [\r\n        \"Cade.Casper-Bergstrom@gmail.com\",\r\n        \"Ryley52@gmail.com\"\r\n      ],\r\n      \"phoneNumber\": \"702-249-1025\",\r\n      \"location\": {\r\n        \"street\": \"75103 Victor Way\",\r\n        \"city\": \"West Nobleton\",\r\n        \"state\": \"North Dakota\",\r\n        \"country\": \"Sint Maarten\",\r\n        \"zip\": \"35252-7501\",\r\n        \"coordinates\": {\r\n          \"latitude\": -35.6065,\r\n          \"longitude\": -22.141\r\n        }\r\n      },\r\n      \"website\": \"https://queasy-youngster.org/\",\r\n      \"domain\": \"passionate-speculation.net\",\r\n      \"job\": {\r\n        \"title\": \"Internal Research Technician\",\r\n        \"descriptor\": \"Regional\",\r\n        \"area\": \"Optimization\",\r\n        \"type\": \"Representative\",\r\n        \"company\": \"Kunze Group\"\r\n      },\r\n      \"creditCard\": {\r\n        \"number\": \"4875-9156-8174-4762\",\r\n        \"cvv\": \"748\",\r\n        \"issuer\": \"diners_club\"\r\n      },\r\n      \"uuid\": \"f0757b19-65fb-4454-abac-face0751e949\",\r\n      \"objectId\": \"6666b4645e91d08ec652da77\"\r\n    }\r\n  ]\r\n}"
+  }
+]
+
 export {
     reactQuillProperties,
     featuredisplay,
@@ -122,5 +173,6 @@ export {
     deviceTypeLabels,
     deviceTypeList,
     deviceMobileOSLabels,
-    deviceMobileOSList
+    deviceMobileOSList,
+    samplesystemlogs
 }
