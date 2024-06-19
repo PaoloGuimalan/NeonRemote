@@ -170,6 +170,20 @@ function DeviceItem() {
     folder: <CiFolderOn style={{fontSize: "30px", color: "#000000"}} />
   }
 
+  const download = (data: string, filename: string, type: string) => {
+    var file = new Blob([data], {type: type});
+    var a = document.createElement("a"),
+    url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);  
+    }, 0); 
+}
+
   return (
     <div className='w-full flex flex-col flex-1 bg-transparent overflow-y-scroll x-scroll p-[20px] items-center font-Inter gap-[20px]'>
         <div className="w-full flex flex-row">
@@ -180,7 +194,7 @@ function DeviceItem() {
         </div>
         <div className='bg-transparent w-full flex flex-row flex-wrap gap-[10px]'>
           <div className='w-full max-w-[300px] flex flex-col gap-[10px]'>
-            <div className='w-full max-h-[270px] bg-black text-white rounded-[5px] p-[20px] flex flex-col items-start gap-[2px]'>
+            <div className='w-full max-h-[280px] bg-black text-white rounded-[5px] p-[20px] flex flex-col items-start gap-[2px]'>
               <div className='w-full flex flex-col items-start gap-[4px]'>
                 <span className='font-semibold text-[16px]'>{deviceinfo.deviceID}</span>
                 <span className='font-semibold text-[16px]'>{authentication.user.userID}</span>
@@ -205,8 +219,15 @@ function DeviceItem() {
                     }}
                   >Copy</Button>
                 </div>
+                <div className='w-full flex flex-row gap-[5px] mt-[10px]'>
+                  <Button className='h-[35px] text-[12px] w-full bg-white text-black hover:bg-[#f7f7f7] font-semibold rounded-[4px]'
+                    onClick={() => {
+                      download(`${authentication.user.userID};${deviceinfo.deviceID};${deviceinfo.connectionToken}`, `${deviceinfo.deviceName}.nsrv`, "nsrv");
+                    }}
+                  >Download .nsrv file</Button>
+                </div>
               </div>
-              <div className='w-full flex flex-row gap-[5px] mt-[30px]'>
+              <div className='w-full flex flex-row gap-[5px] mt-[5px]'>
                 <div className={`${deviceinfo.isActivated ? "bg-green-500" : "bg-[#b3b3b3]"} p-[5px] pl-[10px] pr-[10px] text-[12px] text-white flex flex-1 justify-center rounded-[3px]`}>
                   {deviceinfo.isActivated ? "Activated" : "Not Activated"}
                 </div>
