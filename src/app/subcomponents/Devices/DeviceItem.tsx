@@ -7,7 +7,11 @@ import {
   IDeviceItems,
   SystemLogsItem,
 } from "@/hooks/interfaces";
-import { GetDeviceFilesRequest, GetDeviceInfoRequest } from "@/hooks/requests";
+import {
+  GetDeviceFilesRequest,
+  GetDeviceInfoRequest,
+  GetFetchFileRequest,
+} from "@/hooks/requests";
 import { fetchedDeviceDataState } from "@/redux/actions/states";
 import { SET_DEVICE_DIRECTORY, SET_DEVICE_INFO } from "@/redux/types";
 import { RiComputerLine } from "react-icons/ri";
@@ -205,6 +209,26 @@ function DeviceItem() {
     }, 0);
   };
 
+  const GetFetchFileRequestProcess = () => {
+    GetFetchFileRequest({
+      token: authentication.user.token,
+      handshake: {
+        deviceID: deviceinfo.deviceID,
+        path:
+          deviceinfo.os === "linux"
+            ? contextMenu.data?.path.replace("\\", "/")
+            : contextMenu.data?.path,
+        filename: contextMenu.data?.filename,
+      },
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleContextMenuClick = (
     action: string,
     target: string,
@@ -218,6 +242,9 @@ function DeviceItem() {
 
     if (target === "file") {
       // pending features
+      if (action === "fetch") {
+        GetFetchFileRequestProcess();
+      }
     }
 
     if (target === "folder") {
@@ -635,3 +662,4 @@ function DeviceItem() {
 }
 
 export default DeviceItem;
+
