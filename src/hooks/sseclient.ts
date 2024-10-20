@@ -8,6 +8,7 @@ import {
   SET_DEVICE_DIRNPATH,
   SET_DEVICE_INFO,
   SET_DEVICE_LIST,
+  SET_ONGOING_FILE_TRANSFER,
   SET_SYSTEM_LOGS,
 } from "@/redux/types";
 
@@ -158,6 +159,20 @@ const SSENotificationsTRequest = (
       });
     }
   });
+
+  sseNtfsSource.addEventListener("fetch_file_metadata", (e) => {
+    const parsedresponse = JSON.parse(e.data);
+    if (parsedresponse.status) {
+      const decodedResult: any = jwt_decode(parsedresponse.result);
+
+      dispatch({
+        type: SET_ONGOING_FILE_TRANSFER,
+        payload: {
+          newfiletransfer: decodedResult.data,
+        },
+      });
+    }
+  });
 };
 
 const CloseSSENotifications = () => {
@@ -167,4 +182,3 @@ const CloseSSENotifications = () => {
 };
 
 export { SSENotificationsTRequest, CloseSSENotifications };
-
