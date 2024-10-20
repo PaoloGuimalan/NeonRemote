@@ -95,6 +95,7 @@ export interface OnGoingFileTransferItem {
     size: number;
     filename: string;
     path: string;
+    parts: any[];
   };
 }
 
