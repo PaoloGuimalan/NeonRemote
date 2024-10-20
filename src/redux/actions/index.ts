@@ -13,6 +13,7 @@ import {
   SET_DEVICE_DIRNPATH,
   SET_DEVICE_INFO,
   SET_DEVICE_LIST,
+  SET_ONGOING_FILE_CHUNK,
   SET_ONGOING_FILE_TRANSFER,
   SET_SYSTEM_LOGS,
 } from "../types";
@@ -99,6 +100,28 @@ export const setongoingfiletransfer = (
   switch (action.type) {
     case SET_ONGOING_FILE_TRANSFER:
       return [action.payload.newfiletransfer, ...state];
+    case SET_ONGOING_FILE_CHUNK:
+      const newstate = action.payload.newchunk.data;
+      const newstateidentifier = action.payload.newchunk.metadata;
+      const currentstatefilter = state.filter(
+        (flt: OnGoingFileTransferItem) =>
+          flt.deviceID === newstateidentifier.deviceID &&
+          flt.file.path === newstateidentifier.path &&
+          flt.file.filename === newstateidentifier.filename
+      );
+
+      const currentstatenonfilter = state.filter(
+        (flt: OnGoingFileTransferItem) =>
+          flt.file.path !== newstateidentifier.path &&
+          flt.file.filename !== newstateidentifier.filename
+      );
+
+      if (currentstatefilter.length > 0) {
+        currentstatefilter[0].file.parts.push(newstate);
+        return [...currentstatenonfilter, ...currentstatefilter];
+      }
+
+      return state;
     default:
       return state;
   }

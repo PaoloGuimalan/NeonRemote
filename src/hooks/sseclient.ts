@@ -8,6 +8,7 @@ import {
   SET_DEVICE_DIRNPATH,
   SET_DEVICE_INFO,
   SET_DEVICE_LIST,
+  SET_ONGOING_FILE_CHUNK,
   SET_ONGOING_FILE_TRANSFER,
   SET_SYSTEM_LOGS,
 } from "@/redux/types";
@@ -169,6 +170,55 @@ const SSENotificationsTRequest = (
         type: SET_ONGOING_FILE_TRANSFER,
         payload: {
           newfiletransfer: decodedResult.data,
+        },
+      });
+    }
+  });
+
+  function base64toBlob(base64Data: string, contentType: string) {
+    contentType = contentType || "";
+    const sliceSize = 1024;
+    const byteCharacters = atob(base64Data);
+    const bytesLength = byteCharacters.length;
+    const slicesCount = Math.ceil(bytesLength / sliceSize);
+    const byteArrays = new Array(slicesCount);
+
+    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+      const begin = sliceIndex * sliceSize;
+      const end = Math.min(begin + sliceSize, bytesLength);
+
+      const bytes = new Array(end - begin);
+      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
+        bytes[i] = byteCharacters[offset].charCodeAt(0);
+      }
+      byteArrays[sliceIndex] = new Uint8Array(bytes);
+    }
+    return new Blob(byteArrays, { type: contentType });
+  }
+
+  sseNtfsSource.addEventListener("fetch_file_response", async (e) => {
+    const parsedresponse = JSON.parse(e.data);
+    if (parsedresponse.status) {
+      const decodedResult: any = jwt_decode(parsedresponse.result);
+
+      const data = decodedResult.data.part;
+      const metadata = decodedResult.data.file;
+      const deviceID = decodedResult.data.deviceID;
+      const blobdata = base64toBlob(data.chunk.split(",")[1], "");
+
+      dispatch({
+        type: SET_ONGOING_FILE_CHUNK,
+        payload: {
+          newchunk: {
+            data: {
+              PartNumber: data.PartNumber,
+              chunk: blobdata,
+            },
+            metadata: {
+              ...metadata,
+              deviceID,
+            },
+          },
         },
       });
     }
