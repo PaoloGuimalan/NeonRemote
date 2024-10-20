@@ -22,7 +22,7 @@ import {
   IoRefresh,
   IoChevronBack,
 } from "react-icons/io5";
-import { CiFileOff, CiFileOn, CiFolderOn } from "react-icons/ci";
+import { CiFileOff } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -36,6 +36,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { motion } from "framer-motion";
 import DeviceContextMenu from "@/app/widgets/Devices/DeviceContextMenu";
 import { contextMenuState } from "@/hooks/states";
+import DeviceDirectoryItems from "./DeviceDirectoryItems";
 
 function DeviceItem() {
   const deviceData = useParams();
@@ -188,11 +189,6 @@ function DeviceItem() {
     pc: <RiComputerLine style={{ fontSize: "27px", color: "#000000" }} />,
     mobile: <RxMobile style={{ fontSize: "27px", color: "#000000" }} />,
     embedded: <PiCircuitry style={{ fontSize: "27px", color: "#000000" }} />,
-  };
-
-  const diricons: any = {
-    file: <CiFileOn style={{ fontSize: "30px", color: "#000000" }} />,
-    folder: <CiFolderOn style={{ fontSize: "30px", color: "#000000" }} />,
   };
 
   const download = (data: string, filename: string, type: string) => {
@@ -449,39 +445,12 @@ function DeviceItem() {
                 >
                   {deviceinfo.files.list.map((mp: IDeviceItems, i: number) => {
                     return (
-                      <div
+                      <DeviceDirectoryItems
                         key={i}
-                        onClick={() => {
-                          if (deviceinfo.os === "windows") {
-                            if (mp.type === "folder") {
-                              GetFilesListProcess(`${mp.path}`);
-                            }
-                          } else if (deviceinfo.os === "linux") {
-                            if (mp.type === "folder") {
-                              GetFilesListProcess(
-                                `${mp.path.replaceAll("\\", "/")}`
-                              );
-                            }
-                          }
-                        }}
-                        title={mp.filename}
-                        onContextMenu={(e: any) => {
-                          e.preventDefault();
-                          setTimeout(() => {
-                            setcontextMenu((prev) => ({
-                              ...prev,
-                              data: mp,
-                              target: mp.type,
-                            }));
-                          }, 50);
-                        }}
-                        className={`bg-transparent hover:bg-[#b3b3b3] rounded-[5px] cursor-pointer p-[10px] w-full max-w-[100px] h-[80px] max-h-[100px] flex flex-col gap-[10px] items-center justify-end`}
-                      >
-                        {diricons[mp.type]}
-                        <span className="w-full text-ellipsis truncate overflow-hidden text-[12px]">
-                          {mp.filename}
-                        </span>
-                      </div>
+                        mp={mp}
+                        GetFilesListProcess={GetFilesListProcess}
+                        setcontextMenu={setcontextMenu}
+                      />
                     );
                   })}
                 </div>
@@ -662,4 +631,3 @@ function DeviceItem() {
 }
 
 export default DeviceItem;
-

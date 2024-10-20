@@ -86,6 +86,18 @@ export interface FetchedDeviceDataInterface {
   };
 }
 
+export interface OnGoingFileTransferItem {
+  deviceID: string;
+  toID: string;
+  file: {
+    totalChunks: number;
+    mimeType: string;
+    size: number;
+    filename: string;
+    path: string;
+  };
+}
+
 export interface SystemLogsItem {
   deviceID: string;
   time: string;

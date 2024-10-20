@@ -3,6 +3,7 @@
 import {
   ActionProp,
   FetchedDeviceDataInterface,
+  OnGoingFileTransferItem,
   SystemLogsItem,
 } from "@/hooks/interfaces";
 import {
@@ -12,6 +13,7 @@ import {
   SET_DEVICE_DIRNPATH,
   SET_DEVICE_INFO,
   SET_DEVICE_LIST,
+  SET_ONGOING_FILE_TRANSFER,
   SET_SYSTEM_LOGS,
 } from "../types";
 import { authenticationstate, fetchedDeviceDataState } from "./states";
@@ -87,5 +89,17 @@ export const setsystemlogs = (
       return [action.payload.newlog, ...state.reverse()];
     default:
       return state.reverse();
+  }
+};
+
+export const setongoingfiletransfer = (
+  state: OnGoingFileTransferItem[] = [],
+  action: ActionProp
+) => {
+  switch (action.type) {
+    case SET_ONGOING_FILE_TRANSFER:
+      return [action.payload.newfiletransfer, ...state];
+    default:
+      return state;
   }
 };
