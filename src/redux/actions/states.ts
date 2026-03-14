@@ -3,22 +3,18 @@ import { FetchedDeviceDataInterface } from "@/hooks/interfaces";
 export const authenticationstate = {
   auth: null,
   user: {
-    fullname: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-    },
-    birthdate: {
-      month: "",
-      day: "",
-      year: "",
-    },
-    contact: "",
-    email: "",
+    id: "",
+    username: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birthdate: "",
     profile: "",
-    token: "",
-    isActivated: false,
-    isVerified: false,
+    gender: "",
+    email: "",
+    date_created: "",
+    is_active: false,
+    is_verified: false,
   },
 };
 

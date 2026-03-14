@@ -11,32 +11,26 @@ const API = import.meta.env.VITE_NEON_AI_API;
 const SECRET = import.meta.env.VITE_JWT_SECRET;
 
 const LoginRequest = (
-  params: any,
+  payload: any,
   dispatch: Dispatch<any>,
-  authentication: AuthStateInterface
+  authentication: AuthStateInterface,
 ) => {
-  const encodedParams = sign(params, SECRET);
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("token", encodedParams);
+  // const encodedParams = sign(params, SECRET);
+  // const urlencoded = new URLSearchParams();
+  // urlencoded.append("token", encodedParams);
 
-  Axios.post(`${API}${AUTH.login}`, urlencoded, {
+  Axios.post(`${API}${AUTH.login}`, payload, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   })
     .then((response) => {
       if (response.data.status) {
-        const decodedToken: any = jwtDecode(response.data.result);
+        const decodedToken: any = jwtDecode(response.data.result.usertoken);
         const userdata = decodedToken;
         const authtoken = {
           ...userdata,
-          token: sign(
-            {
-              email: userdata.email,
-              userID: userdata.userID,
-            },
-            SECRET
-          ),
+          token: response.data.result.authtoken,
         };
 
         const encodedAuthToken = sign(authtoken, SECRET);
@@ -99,10 +93,10 @@ const RegisterRequest = async (payload: any) => {
     });
 };
 
-const RefreshAuthRequest = async (payload: any) => {
+const RefreshAuthRequest = async (payload: any, username: string) => {
   const encodedpayload = payload;
 
-  return await Axios.get(`${API}${AUTH.refreshauth}`, {
+  return await Axios.get(`${API}${AUTH.refreshauth}/${username}/`, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "x-access-token": encodedpayload,
@@ -239,7 +233,7 @@ const GetFetchFileRequest = async (params: any) => {
         "Content-Type": "application/x-www-form-urlencoded",
         "x-access-token": authtoken,
       },
-    }
+    },
   )
     .then((response) => {
       return response;
@@ -260,4 +254,3 @@ export {
   GetDeviceFilesRequest,
   GetFetchFileRequest,
 };
-

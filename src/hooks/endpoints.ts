@@ -1,7 +1,7 @@
 const AUTH = {
-  login: "/auth/login",
+  login: "/api/user/auth",
   register: "/auth/register",
-  refreshauth: "/auth/refreshauth",
+  refreshauth: "/api/user/auth",
   verification: "/auth/verification",
 };
 
@@ -17,4 +17,3 @@ const POST = {
 };
 
 export { AUTH, GET, POST };
-

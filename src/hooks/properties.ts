@@ -44,24 +44,34 @@ const reactQuillProperties = () => {
 
 const featuredisplay = [
   {
+    name: "Chat",
+    description: "Chat with your companion AI",
+    route: "/chat",
+    disabled: false,
+  },
+  {
     name: "Devices",
     description: "Add, Access, Control your devices remotely.",
     route: "/devices",
+    disabled: true,
   },
   {
     name: "Map Tracker",
     description: "Use map to track, navigate and locate devices and services.",
     route: "/map",
+    disabled: true,
   },
   {
     name: "Streaming",
     description: "Stream Music and Videos from any of your devices.",
     route: "",
+    disabled: true,
   },
   {
     name: "Peer Storage",
     description: "Move, Copy, Share files from your devices remotely.",
     route: "",
+    disabled: true,
   },
 ];
 

@@ -21,27 +21,20 @@ export interface RegisterInterface {
 }
 
 export interface AuthTokenInterface {
-  userID: string;
-  fullname: {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-  };
-  birthdate: {
-    month: string;
-    day: string;
-    year: string;
-  };
-  dateCreated: {
-    date: string;
-    time: string;
-  };
-  contact: string;
+  id: string;
+  username: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  birthdate: string;
+  gender: string;
+  date_created: string;
+  contact?: string | null;
   email: string;
   profile: string;
-  token: string;
-  isActivated: boolean;
-  isVerified: boolean;
+  token?: string | null;
+  is_active: boolean;
+  is_verified: boolean;
 }
 
 export interface AuthStateInterface {

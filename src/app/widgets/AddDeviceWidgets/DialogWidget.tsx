@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,116 +8,137 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { AuthStateInterface, DeviceInfoInterface, DialogWidgetProp } from "@/hooks/interfaces"
-import DropdownMenuWidget from "./DropdownMenuWidget"
-import { useState } from "react"
-import { deviceMobileOSLabels, deviceMobileOSList, deviceOSLabels, deviceOSList, deviceTypeLabels, deviceTypeList } from "@/hooks/properties"
-import { AddDeviceRequest, GetDevicesRequest } from "@/hooks/requests"
-import { useToast } from "@/components/ui/use-toast"
-import { useSelector } from "react-redux"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  AuthStateInterface,
+  DeviceInfoInterface,
+  DialogWidgetProp,
+} from "@/hooks/interfaces";
+import DropdownMenuWidget from "./DropdownMenuWidget";
+import { useState } from "react";
+import {
+  deviceMobileOSLabels,
+  deviceMobileOSList,
+  deviceOSLabels,
+  deviceOSList,
+  deviceTypeLabels,
+  deviceTypeList,
+} from "@/hooks/properties";
+import { AddDeviceRequest, GetDevicesRequest } from "@/hooks/requests";
+import { useToast } from "@/components/ui/use-toast";
+import { useSelector } from "react-redux";
 
 export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
-
-  const authentication: AuthStateInterface = useSelector((state: any) => state.authentication);
+  const authentication: AuthStateInterface = useSelector(
+    (state: any) => state.authentication,
+  );
 
   const deviceInfoState: DeviceInfoInterface = {
     deviceName: "",
     deviceType: "none",
-    os: "none"
+    os: "none",
   };
 
-  const [deviceInfo, setdeviceInfo] = useState<DeviceInfoInterface>(deviceInfoState);
+  const [deviceInfo, setdeviceInfo] =
+    useState<DeviceInfoInterface>(deviceInfoState);
   const [openDialog, setopenDialog] = useState<boolean>(false);
 
   const { toast } = useToast();
 
   const setDeviceType = (newType: string) => {
-    if(newType === "embedded" || newType === "none"){
+    if (newType === "embedded" || newType === "none") {
       setdeviceInfo({
         ...deviceInfo,
         deviceType: newType,
-        os: "none"
-      })
-    }
-    else{
+        os: "none",
+      });
+    } else {
       setdeviceInfo({
         ...deviceInfo,
         deviceType: newType,
-        os: "none"
-      })
+        os: "none",
+      });
     }
-  }
+  };
 
   const setOperatingSystem = (newOS: string) => {
     setdeviceInfo({
       ...deviceInfo,
-      os: newOS
-    })
-  }
+      os: newOS,
+    });
+  };
 
   const changeDeviceName = (newName: string) => {
     setdeviceInfo({
       ...deviceInfo,
-      deviceName: newName
-    })
-  }
+      deviceName: newName,
+    });
+  };
   const GetDevicesProcess = () => {
     GetDevicesRequest({
-      token: authentication.user.token
-    }).then((response) => {
-      if(!response.data.status){
-        toast({
-          title: response.data.message
-        })
-      }
-    }).catch((err) => {
-      console.log(err);
-      toast({
-        title: err.message
-      })
+      token: authentication.user.token,
     })
-  }
+      .then((response) => {
+        if (!response.data.status) {
+          toast({
+            title: response.data.message,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          title: err.message,
+        });
+      });
+  };
 
   const AddDeviceProcess = () => {
     AddDeviceRequest({
       data: deviceInfo,
-      token: authentication.user.token
-    }).then((response) => {
-      if(response.data.status){
-        setopenDialog(false);
-        setdeviceInfo(deviceInfoState);
-        GetDevicesProcess();
-        toast({
-          title: response.data.message
-        })
-      }
-      else{
-        toast({
-          title: response.data.message
-        })
-      }
-    }).catch((err) => {
-      console.log(err);
-      toast({
-        title: err.message
-      })
+      token: authentication.user.token,
     })
-  }
+      .then((response) => {
+        if (response.data.status) {
+          setopenDialog(false);
+          setdeviceInfo(deviceInfoState);
+          GetDevicesProcess();
+          toast({
+            title: response.data.message,
+          });
+        } else {
+          toast({
+            title: response.data.message,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          title: err.message,
+        });
+      });
+  };
 
   return (
-    <Dialog open={openDialog} onOpenChange={(e) => {
-      setopenDialog(e);
-      if(!e){
-        setdeviceInfo(deviceInfoState);
-      }
-    }}>
+    <Dialog
+      open={openDialog}
+      onOpenChange={(e) => {
+        setopenDialog(e);
+        if (!e) {
+          setdeviceInfo(deviceInfoState);
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-[5px] text-[12px] h-[35px] w-[130px] items-center justify-center bg-black text-white hover:bg-black hover:text-white">
-            {icon}
-            {buttonlabel}
+        <Button
+          variant="outline"
+          className="gap-[5px] text-[12px] h-[35px] w-[130px] items-center justify-center bg-black text-white hover:bg-black hover:text-white"
+        >
+          {icon}
+          {buttonlabel}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -131,14 +153,27 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
             <Label htmlFor="name" className="text-right">
               Device Name
             </Label>
-            <Input id="name" value={deviceInfo.deviceName} onChange={(e) => { changeDeviceName(e.target.value) }} placeholder="ex: My Device" className="col-span-3" />
+            <Input
+              id="name"
+              value={deviceInfo.deviceName}
+              onChange={(e) => {
+                changeDeviceName(e.target.value);
+              }}
+              placeholder="ex: My Device"
+              className="col-span-3"
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-3">
             <Label htmlFor="type" className="text-right">
               Device Type
             </Label>
             <div id="type" className="col-span-3">
-              <DropdownMenuWidget position={deviceInfo.deviceType} list={deviceTypeList} labels={deviceTypeLabels} setPosition={setDeviceType} />
+              <DropdownMenuWidget
+                position={deviceInfo.deviceType}
+                list={deviceTypeList}
+                labels={deviceTypeLabels}
+                setPosition={setDeviceType}
+              />
             </div>
           </div>
           {deviceInfo.deviceType !== "embedded" && (
@@ -147,15 +182,35 @@ export default function DialogWidget({ buttonlabel, icon }: DialogWidgetProp) {
                 Operating System
               </Label>
               <div id="type" className="col-span-3">
-                <DropdownMenuWidget position={deviceInfo.os} list={deviceInfo.deviceType === "pc" ? deviceOSList : deviceMobileOSList} labels={deviceInfo.deviceType === "pc" ? deviceOSLabels : deviceMobileOSLabels} setPosition={setOperatingSystem} />
+                <DropdownMenuWidget
+                  position={deviceInfo.os}
+                  list={
+                    deviceInfo.deviceType === "pc"
+                      ? deviceOSList
+                      : deviceMobileOSList
+                  }
+                  labels={
+                    deviceInfo.deviceType === "pc"
+                      ? deviceOSLabels
+                      : deviceMobileOSLabels
+                  }
+                  setPosition={setOperatingSystem}
+                />
               </div>
             </div>
           )}
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={() => { AddDeviceProcess() }}>Save changes</Button>
+          <Button
+            type="submit"
+            onClick={() => {
+              AddDeviceProcess();
+            }}
+          >
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
