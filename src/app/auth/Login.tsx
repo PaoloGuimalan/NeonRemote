@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyboardEvent } from "react";
-import { LoginRequest } from "@/hooks/requests";
+import {
+  LoginRequest,
+  ThirdPartyAuthenticationRequest,
+} from "@/hooks/requests";
 import { checkIfValid } from "@/hooks/reusables";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +16,8 @@ import {
 } from "@react-oauth/google";
 import { envs } from "@/hooks/configs";
 import jwtDecode from "jwt-decode";
+import { SET_AUTHENTICATION } from "@/redux/types";
+import sign from "jwt-encode";
 
 function Login() {
   const [email, setemail] = useState("");
@@ -48,6 +53,35 @@ function Login() {
     if (event.code == "Enter") {
       loginRequestProcess();
     }
+  };
+
+  const TPAuthProcess = (token: string) => {
+    ThirdPartyAuthenticationRequest({ token })
+      .then((response: any) => {
+        if (response.status) {
+          const decodedToken: any = jwtDecode(response.result.usertoken);
+          const userdata = decodedToken;
+          const authtoken = {
+            ...userdata,
+            token: response.result.authtoken,
+          };
+
+          const encodedAuthToken = sign(authtoken, envs.SECRET);
+          localStorage.setItem("authtoken", encodedAuthToken);
+          dispatch({
+            type: SET_AUTHENTICATION,
+            payload: {
+              authentication: {
+                auth: true,
+                user: authtoken,
+              },
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -109,22 +143,7 @@ function Login() {
             <GoogleLogin
               onSuccess={(credentialResponse: CredentialResponse) => {
                 if (credentialResponse.credential) {
-                  const decoded: any = jwtDecode(credentialResponse.credential);
-                  console.log({
-                    fullname: {
-                      firstName: decoded.given_name,
-                      middleName: "",
-                      lastName: decoded.family_name,
-                    },
-                    birthdate: {
-                      month: "",
-                      day: "",
-                      year: "",
-                    },
-                    contact: "",
-                    email: decoded.email,
-                    password: "",
-                  });
+                  TPAuthProcess(credentialResponse.credential);
                 } else {
                   console.log("Unable to login using this account.");
                 }

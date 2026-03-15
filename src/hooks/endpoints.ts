@@ -25,4 +25,8 @@ const POST = {
   fetchfile: "/access/fetchfile",
 };
 
-export { AUTH, GET, POST, CHAT, CONVERSATION };
+const TPAUTH = {
+  auth: "/api/user/tp_auth",
+};
+
+export { AUTH, GET, POST, CHAT, CONVERSATION, TPAUTH };

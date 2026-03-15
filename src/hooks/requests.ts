@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch } from "react";
 import Axios from "axios";
-import { AUTH, CHAT, CONVERSATION, GET, POST } from "./endpoints";
+import { AUTH, CHAT, CONVERSATION, GET, POST, TPAUTH } from "./endpoints";
 import sign from "jwt-encode";
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
@@ -348,6 +348,20 @@ const StreamMessageRequest = async (
     });
 };
 
+const ThirdPartyAuthenticationRequest = async (params: any) => {
+  const payload = params;
+  // const encodedPayload = sign(payload, SECRET);
+
+  // previous: `${API}/auth/login`
+  return await Axios.post(`${API}${TPAUTH.auth}`, payload)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 export {
   LoginRequest,
   RegisterRequest,
@@ -362,4 +376,5 @@ export {
   GetConversationInfoRequest,
   GetMessagesRequest,
   StreamMessageRequest,
+  ThirdPartyAuthenticationRequest,
 };

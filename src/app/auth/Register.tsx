@@ -3,7 +3,10 @@
 import { useToast } from "@/components/ui/use-toast";
 import { envs } from "@/hooks/configs";
 import { RegisterInterface } from "@/hooks/interfaces";
-import { RegisterRequest } from "@/hooks/requests";
+import {
+  RegisterRequest,
+  ThirdPartyAuthenticationRequest,
+} from "@/hooks/requests";
 import { getDaysInMonth, monthList, years } from "@/hooks/reusables";
 import { SET_AUTHENTICATION } from "@/redux/types";
 import {
@@ -149,6 +152,35 @@ function Register() {
       default:
         return false;
     }
+  };
+
+  const TPAuthProcess = (token: string) => {
+    ThirdPartyAuthenticationRequest({ token })
+      .then((response: any) => {
+        if (response.status) {
+          const decodedToken: any = jwtDecode(response.result.usertoken);
+          const userdata = decodedToken;
+          const authtoken = {
+            ...userdata,
+            token: response.result.authtoken,
+          };
+
+          const encodedAuthToken = sign(authtoken, envs.SECRET);
+          localStorage.setItem("authtoken", encodedAuthToken);
+          dispatch({
+            type: SET_AUTHENTICATION,
+            payload: {
+              authentication: {
+                auth: true,
+                user: authtoken,
+              },
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -337,22 +369,7 @@ function Register() {
             <GoogleLogin
               onSuccess={(credentialResponse: CredentialResponse) => {
                 if (credentialResponse.credential) {
-                  const decoded: any = jwtDecode(credentialResponse.credential);
-                  console.log({
-                    fullname: {
-                      firstName: decoded.given_name,
-                      middleName: "",
-                      lastName: decoded.family_name,
-                    },
-                    birthdate: {
-                      month: "",
-                      day: "",
-                      year: "",
-                    },
-                    contact: "",
-                    email: decoded.email,
-                    password: "",
-                  });
+                  TPAuthProcess(credentialResponse.credential);
                 } else {
                   console.log("Unable to login using this account.");
                 }
