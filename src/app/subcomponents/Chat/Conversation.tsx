@@ -38,7 +38,7 @@ function Conversation() {
     useState<IPagination<IMessage>>(paginationstate);
   const [pendingMessages, setpendingMessages] = useState<IPendingMessage[]>([]);
   const [isAITyping, setisAITyping] = useState<boolean>(false);
-  const [currentToken, setcurrentToken] = useState<string>("");
+  const [currentToken, setcurrentToken] = useState<string>("Thinking...");
 
   const GetMessagesProcess = () => {
     GetMessagesRequest({
@@ -130,7 +130,7 @@ function Conversation() {
           });
         },
         onDone: () => {
-          setcurrentToken("");
+          setcurrentToken("Thinking...");
           GetMessagesProcess();
         },
       },
