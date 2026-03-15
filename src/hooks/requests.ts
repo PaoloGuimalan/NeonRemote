@@ -1,7 +1,8 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch } from "react";
 import Axios from "axios";
-import { AUTH, GET, POST } from "./endpoints";
+import { AUTH, CHAT, CONVERSATION, GET, POST } from "./endpoints";
 import sign from "jwt-encode";
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
@@ -243,6 +244,110 @@ const GetFetchFileRequest = async (params: any) => {
     });
 };
 
+const GetMessagesListRequest = async (params: any) => {
+  const authtoken = params.token;
+
+  return await Axios.get(`${API}${CHAT.list}`, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "x-access-token": authtoken,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+};
+
+const GetConversationInfoRequest = async (params: any) => {
+  const authtoken = params.token;
+  const conversation_id = params.conversation_id;
+
+  return await Axios.get(`${API}${CONVERSATION.info}${conversation_id}`, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "x-access-token": authtoken,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+};
+
+const GetMessagesRequest = async (params: any) => {
+  const authtoken = params.token;
+  const conversation_id = params.conversation_id;
+
+  return await Axios.get(`${API}${CHAT.messages}${conversation_id}`, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "x-access-token": authtoken,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+};
+
+const StreamMessageRequest = async (
+  params: any,
+  payload: any,
+  callbacks: {
+    onChunk?: (chunk: string) => void;
+    onDone?: () => void;
+  } = {},
+) => {
+  const authtoken = params.token;
+  const conversation_id = params.conversation_id;
+
+  return await fetch(`${API}${CHAT.messages}${conversation_id}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": authtoken,
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullStream = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            callbacks.onDone?.();
+            break;
+          }
+
+          const chunk = decoder.decode(value, { stream: true });
+          fullStream += chunk;
+
+          callbacks.onChunk?.(chunk);
+        }
+
+        return fullStream;
+      } finally {
+        reader.releaseLock();
+      }
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+};
+
 export {
   LoginRequest,
   RegisterRequest,
@@ -253,4 +358,8 @@ export {
   GetDeviceInfoRequest,
   GetDeviceFilesRequest,
   GetFetchFileRequest,
+  GetMessagesListRequest,
+  GetConversationInfoRequest,
+  GetMessagesRequest,
+  StreamMessageRequest,
 };

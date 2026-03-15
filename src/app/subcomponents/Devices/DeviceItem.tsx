@@ -42,16 +42,16 @@ function DeviceItem() {
   const deviceData = useParams();
 
   const counteronsseopen: number = useSelector(
-    (state: any) => state.counteronsseopen
+    (state: any) => state.counteronsseopen,
   );
   const authentication: AuthStateInterface = useSelector(
-    (state: any) => state.authentication
+    (state: any) => state.authentication,
   );
   const deviceinfo: FetchedDeviceDataInterface = useSelector(
-    (state: any) => state.deviceinfo
+    (state: any) => state.deviceinfo,
   );
   const systemlogs: SystemLogsItem[] = useSelector(
-    (state: any) => state.systemlogs
+    (state: any) => state.systemlogs,
   );
 
   const [currentworkshoptab, setcurrentworkshoptab] =
@@ -228,7 +228,7 @@ function DeviceItem() {
   const handleContextMenuClick = (
     action: string,
     target: string,
-    data: IDeviceItems | null
+    data: IDeviceItems | null,
   ) => {
     if (target === "none") {
       if (action === "reload") {
@@ -281,7 +281,7 @@ function DeviceItem() {
                 {deviceinfo.deviceID}
               </span>
               <span className="font-semibold text-[16px]">
-                {authentication.user.userID}
+                {authentication.user.username}
               </span>
             </div>
             <div className="w-full flex flex-col items-start gap-[0px]">
@@ -324,9 +324,9 @@ function DeviceItem() {
                   className="h-[35px] text-[12px] w-full bg-white text-black hover:bg-[#f7f7f7] font-semibold rounded-[4px]"
                   onClick={() => {
                     download(
-                      `${authentication.user.userID};${deviceinfo.deviceID};${deviceinfo.connectionToken}`,
+                      `${authentication.user.username};${deviceinfo.deviceID};${deviceinfo.connectionToken}`,
                       `${deviceinfo.deviceName}.nsrv`,
-                      "nsrv"
+                      "nsrv",
                     );
                   }}
                 >
@@ -377,7 +377,7 @@ function DeviceItem() {
               <Button
                 onClick={() => {
                   GoBackDirectory(
-                    decodeURIComponent(deviceinfo.files.directory)
+                    decodeURIComponent(deviceinfo.files.directory),
                   );
                 }}
                 className="h-[35px] bg-white text-black hover:bg-[#f7f7f7] items-center justify-center"
@@ -490,7 +490,7 @@ function DeviceItem() {
                 onClick={() => {
                   setcurrentworkshoptab("command_prompt");
                 }}
-                className="select-none w-full flex items-start gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]"
+                className="select-none w-full flex gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]"
               >
                 <span className="text-[14px] font-semibold">
                   Command Prompt
@@ -512,7 +512,7 @@ function DeviceItem() {
                 onClick={() => {
                   setcurrentworkshoptab("system_logs");
                 }}
-                className="select-none w-full flex items-start gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]"
+                className="select-none w-full flex gap-[5px] max-w-[180px] p-[10px] border-[1px] border-t-[0px] border-[#4d4d4d] items-center justify-center rounded-[7px] rounded-b-[0px]"
               >
                 <span className="text-[14px] font-semibold">System Logs</span>
               </motion.button>
@@ -583,7 +583,7 @@ function DeviceItem() {
                     {systemlogs
                       .filter(
                         (flt: SystemLogsItem) =>
-                          flt.deviceID === deviceinfo.deviceID
+                          flt.deviceID === deviceinfo.deviceID,
                       )
                       .map((item: SystemLogsItem, i: number) => {
                         return (

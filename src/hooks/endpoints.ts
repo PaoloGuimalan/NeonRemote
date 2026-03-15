@@ -11,9 +11,18 @@ const GET = {
   getdevicefiles: "/access/getdevicefiles/",
 };
 
+const CHAT = {
+  list: "/api/messenger/list",
+  messages: "/api/messenger/",
+};
+
+const CONVERSATION = {
+  info: "/api/messenger/conversation/",
+};
+
 const POST = {
   adddevice: "/access/adddevice",
   fetchfile: "/access/fetchfile",
 };
 
-export { AUTH, GET, POST };
+export { AUTH, GET, POST, CHAT, CONVERSATION };

@@ -34,7 +34,7 @@ function App() {
           .then((response) => {
             if (response.data) {
               toast({
-                title: response.data.message,
+                title: "Session Logged In",
               });
               dispatch({
                 type: SET_AUTHENTICATION,
