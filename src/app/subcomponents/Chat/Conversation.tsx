@@ -81,60 +81,62 @@ function Conversation() {
 
   const SendMessageProcess = async () => {
     const messageToSend = message;
-    setmessage("");
-    const pending_id = uuid();
-    setpendingMessages((prev) => [
-      {
-        pending_id: pending_id,
-        message_type: "text",
-        content: messageToSend,
-      },
-      ...prev,
-    ]);
-    setTimeout(() => {
-      document
-        .getElementById(pending_id)
-        ?.scrollIntoView({ behavior: "smooth" });
-      setisAITyping(true);
+    if (messageToSend.trim() !== "") {
+      setmessage("");
+      const pending_id = uuid();
+      setpendingMessages((prev) => [
+        {
+          pending_id: pending_id,
+          message_type: "text",
+          content: messageToSend,
+        },
+        ...prev,
+      ]);
       setTimeout(() => {
         document
-          .getElementById("loader")
+          .getElementById(pending_id)
           ?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
-    }, 500);
-    await StreamMessageRequest(
-      {
-        token: authentication.user.token,
-        conversation_id: conversationID,
-      },
-      {
-        message_type: "text",
-        content: messageToSend,
-        agent_uuid: "f2bb1740-f408-45d4-b4b3-3a7b03bb268e",
-        model_uuid: "1b54fee3-c7e7-4535-926a-a83f7f2cab8c",
-        pending_id,
-      },
-      {
-        onChunk: (chunk) => {
-          chunk.split("data:").map((mp) => {
-            if (mp.trim() !== "") {
-              const parsed = JSON.parse(mp);
-              setcurrentToken((prev) => {
-                if (prev.length > 60) {
-                  return parsed.token;
-                }
+        setisAITyping(true);
+        setTimeout(() => {
+          document
+            .getElementById("loader")
+            ?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      }, 500);
+      await StreamMessageRequest(
+        {
+          token: authentication.user.token,
+          conversation_id: conversationID,
+        },
+        {
+          message_type: "text",
+          content: messageToSend,
+          agent_uuid: "f2bb1740-f408-45d4-b4b3-3a7b03bb268e",
+          model_uuid: "1b54fee3-c7e7-4535-926a-a83f7f2cab8c",
+          pending_id,
+        },
+        {
+          onChunk: (chunk) => {
+            chunk.split("data:").map((mp) => {
+              if (mp.trim() !== "") {
+                const parsed = JSON.parse(mp);
+                setcurrentToken((prev) => {
+                  if (prev.length > 60) {
+                    return parsed.token;
+                  }
 
-                return prev + parsed.token;
-              });
-            }
-          });
+                  return prev + parsed.token;
+                });
+              }
+            });
+          },
+          onDone: () => {
+            setcurrentToken("Thinking...");
+            GetMessagesProcess();
+          },
         },
-        onDone: () => {
-          setcurrentToken("Thinking...");
-          GetMessagesProcess();
-        },
-      },
-    );
+      );
+    }
   };
 
   useEffect(() => {
@@ -203,7 +205,7 @@ function Conversation() {
             })}
         </div>
       </div>
-      <div className="w-full flex flex-row sticky top-0 justify-center z-[10000]">
+      <div className="w-full flex flex-row sticky top-0 justify-center">
         <div className="w-full flex flex-col p-[10px] bg-[#f0f0f0] rounded-xl max-w-[1000px]">
           <TextareaAutosize
             placeholder="Ask me something"
@@ -225,6 +227,7 @@ function Conversation() {
             </div>
             <div className="flex gap-[5px]">
               <Button
+                disabled={message.trim() === ""}
                 onClick={SendMessageProcess}
                 variant="outline"
                 className="p-0 w-10 rounded-full"

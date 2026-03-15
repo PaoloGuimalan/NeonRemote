@@ -22,7 +22,7 @@ const LoaderWithTooltip = React.forwardRef<
         </TooltipTrigger>
         <TooltipContent
           side="right"
-          className="animate-none opacity-100 border-0 bg-[#f0f0f0] min-h-[40px] flex items-center text-[12px] shadow-lg"
+          className="animate-none opacity-100 border-0 bg-[#f0f0f0] min-h-[40px] flex items-center text-[12px] shadow-lg z-[0]"
         >
           {data}
         </TooltipContent>
