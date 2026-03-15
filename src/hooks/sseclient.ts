@@ -20,9 +20,9 @@ let sseNtfsSource: EventSource | null = null;
 
 const SSENotificationsTRequest = (
   authentication: AuthStateInterface,
-  dispatch: Dispatch<ActionProp>
+  dispatch: Dispatch<ActionProp>,
 ) => {
-  const decodetoken: any = jwt_decode(authentication.user.token);
+  const decodetoken: any = jwt_decode(authentication.user.token!);
   const mutateToken = {
     ...decodetoken,
     connectionType: "remote",
@@ -37,7 +37,7 @@ const SSENotificationsTRequest = (
   const encodedPayload = sign(payload, SECRET);
 
   sseNtfsSource = new EventSource(
-    `${API}/access/ssehandshake/${encodedPayload}`
+    `${API}/access/ssehandshake/${encodedPayload}`,
   );
 
   sseNtfsSource.onopen = () => {
@@ -111,7 +111,7 @@ const SSENotificationsTRequest = (
       const devicefileslistdata = [
         ...decodedResult.data.dirs.map((mp: any) => ({
           filename: decodeURIComponent(mp).split(
-            platform === "linux" ? "/" : "\\"
+            platform === "linux" ? "/" : "\\",
           )[
             decodeURIComponent(mp).split(platform === "linux" ? "/" : "\\")
               .length - 1
@@ -121,7 +121,7 @@ const SSENotificationsTRequest = (
         })),
         ...decodedResult.data.files.map((mp: any) => ({
           filename: decodeURIComponent(mp).split(
-            platform === "linux" ? "/" : "\\"
+            platform === "linux" ? "/" : "\\",
           )[
             decodeURIComponent(mp).split(platform === "linux" ? "/" : "\\")
               .length - 1
