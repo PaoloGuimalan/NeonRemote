@@ -1,263 +1,279 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch } from "react";
 import Axios from "axios";
-import { AUTH, GET, POST } from "./endpoints";
+import { AUTH, CHAT, CONNECTIONS, CONVERSATION, TPAUTH } from "./endpoints";
 import sign from "jwt-encode";
 import { SET_AUTHENTICATION } from "@/redux/types";
 import { AuthStateInterface } from "./interfaces";
 import jwtDecode from "jwt-decode";
+import { API_URL, LOCAL_TOKEN_SECRET } from "./env";
 
-const API = import.meta.env.VITE_NEON_AI_API;
-const SECRET = import.meta.env.VITE_JWT_SECRET;
+const API = API_URL;
+const SECRET = LOCAL_TOKEN_SECRET;
 
-const LoginRequest = (
-  params: any,
+const authHeaders = (token: string) => ({
+  "Content-Type": "application/json",
+  "x-access-token": token,
+});
+
+/**
+ * Pull the message the server actually sent.
+ *
+ * Sign-in errors now originate on chatterloop and are passed through Neon
+ * verbatim - "this account is deactivated", "incorrect password" - so throwing
+ * them away and showing something generic would hide the one thing that tells
+ * a user what to do. The old code only console.logged these.
+ */
+const messageFrom = (err: any, fallback: string) =>
+  err?.response?.data?.message || err?.message || fallback;
+
+const applySession = (
+  result: any,
   dispatch: Dispatch<any>,
-  authentication: AuthStateInterface
 ) => {
-  const encodedParams = sign(params, SECRET);
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("token", encodedParams);
+  const decodedToken: any = jwtDecode(result.usertoken);
+  const authtoken = {
+    ...decodedToken,
+    token: result.authtoken,
+  };
 
-  Axios.post(`${API}${AUTH.login}`, urlencoded, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+  localStorage.setItem("authtoken", sign(authtoken, SECRET));
+  dispatch({
+    type: SET_AUTHENTICATION,
+    payload: {
+      authentication: {
+        auth: true,
+        user: authtoken,
+      },
     },
+  });
+};
+
+const signOutState = (
+  dispatch: Dispatch<any>,
+  authentication: AuthStateInterface,
+) => {
+  dispatch({
+    type: SET_AUTHENTICATION,
+    payload: {
+      authentication: { ...authentication, auth: false },
+    },
+  });
+};
+
+/**
+ * Sign in with a chatterloop account.
+ *
+ * Neon forwards the credential to chatterloop and issues its own session from
+ * the result, so the response shape here is unchanged from when Neon checked
+ * passwords itself.
+ */
+const LoginRequest = (
+  payload: any,
+  dispatch: Dispatch<any>,
+  authentication: AuthStateInterface,
+  onError?: (message: string) => void,
+) => {
+  Axios.post(`${API}${AUTH.login}`, payload, {
+    headers: { "Content-Type": "application/json" },
   })
     .then((response) => {
       if (response.data.status) {
-        const decodedToken: any = jwtDecode(response.data.result);
-        const userdata = decodedToken;
-        const authtoken = {
-          ...userdata,
-          token: sign(
-            {
-              email: userdata.email,
-              userID: userdata.userID,
-            },
-            SECRET
-          ),
-        };
-
-        const encodedAuthToken = sign(authtoken, SECRET);
-        localStorage.setItem("authtoken", encodedAuthToken);
-        dispatch({
-          type: SET_AUTHENTICATION,
-          payload: {
-            authentication: {
-              auth: true,
-              user: authtoken,
-            },
-          },
-        });
+        applySession(response.data.result, dispatch);
       } else {
-        dispatch({
-          type: SET_AUTHENTICATION,
-          payload: {
-            authentication: {
-              ...authentication,
-              auth: false,
-            },
-          },
-        });
-        console.log(response.data);
+        signOutState(dispatch, authentication);
+        onError?.(response.data.message || "Could not sign you in.");
       }
     })
     .catch((err) => {
-      dispatch({
-        type: SET_AUTHENTICATION,
-        payload: {
-          authentication: {
-            ...authentication,
-            auth: false,
-          },
-        },
-      });
-      console.log(err);
+      signOutState(dispatch, authentication);
+      onError?.(messageFrom(err, "Could not sign you in."));
     });
 };
 
-const RegisterRequest = async (payload: any) => {
-  const encodedpayload = sign(payload, SECRET);
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("token", encodedpayload);
-
-  return await Axios.post(`${API}${AUTH.register}`, urlencoded, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+const ThirdPartyAuthenticationRequest = async (params: any) => {
+  return await Axios.post(`${API}${TPAUTH.auth}`, params, {
+    headers: { "Content-Type": "application/json" },
   })
-    .then((response) => {
-      const mutatedresponse = {
-        ...response,
-        SECRET: SECRET,
-      };
-      return mutatedresponse;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Could not sign you in with Google."));
     });
 };
 
-const RefreshAuthRequest = async (payload: any) => {
-  const encodedpayload = payload;
-
-  return await Axios.get(`${API}${AUTH.refreshauth}`, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "x-access-token": encodedpayload,
-    },
+const RefreshAuthRequest = async (payload: any, username: string) => {
+  return await Axios.get(`${API}${AUTH.refreshauth}/${username}/`, {
+    headers: authHeaders(payload),
   })
-    .then((response) => {
-      return response;
-    })
+    .then((response) => response)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Session could not be restored."));
     });
 };
 
-const VerificationRequest = async (payload: any) => {
-  const encodedpayload = sign(payload, SECRET);
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("token", encodedpayload);
+// ------------------------------------------------------------ connections --
 
-  return await Axios.post(`${API}${AUTH.verification}`, urlencoded, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+/** The identities this account can publish bots as. */
+const GetConnectionsRequest = async (params: any) => {
+  return await Axios.get(`${API}${CONNECTIONS.list}`, {
+    headers: authHeaders(params.token),
   })
-    .then((response) => {
-      const mutatedresponse = {
-        ...response,
-        SECRET: SECRET,
-      };
-      return mutatedresponse;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Could not load your connections."));
     });
 };
 
-const AddDeviceRequest = async (payload: any) => {
-  const initialpayload = payload.data;
-  const authtoken = payload.token;
-  const encodedpayload = sign(initialpayload, SECRET);
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("token", encodedpayload);
-
-  return await Axios.post(`${API}${POST.adddevice}`, urlencoded, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "x-access-token": authtoken,
-    },
+/** Chatterloop pages this account could connect but has not yet. */
+const GetAvailablePagesRequest = async (params: any) => {
+  return await Axios.get(`${API}${CONNECTIONS.availablePages}`, {
+    headers: authHeaders(params.token),
   })
-    .then((response) => {
-      return response;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Could not load your pages."));
     });
 };
 
-const GetDevicesRequest = async (params: any) => {
-  const authtoken = params.token;
-
-  return await Axios.get(`${API}${GET.getdevices}`, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "x-access-token": authtoken,
-    },
+/**
+ * Connect a page.
+ *
+ * Only the entity id is sent. Whether this account may act as that page is
+ * decided server-side against chatterloop's own membership table - a client
+ * that could supply the role is a client that could lie about it.
+ */
+const ConnectPageRequest = async (params: any, payload: any) => {
+  return await Axios.post(`${API}${CONNECTIONS.connectPage}`, payload, {
+    headers: authHeaders(params.token),
   })
-    .then((response) => {
-      return response;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Could not connect that page."));
     });
 };
 
-const GetDeviceInfoRequest = async (params: any) => {
-  const authtoken = params.token;
-  const deviceID = params.deviceID;
-
-  return await Axios.get(`${API}${GET.getdeviceinfo}${deviceID}`, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "x-access-token": authtoken,
-    },
+/**
+ * What disconnecting an identity would stop, read BEFORE the confirmation.
+ *
+ * The dialog used to say "any bots published as this identity will be
+ * deactivated" - true, but not answerable by the person reading it. This
+ * returns the actual list, so the confirmation names what it breaks.
+ */
+const GetConnectionImpactRequest = async (params: any) => {
+  return await Axios.get(`${API}${CONNECTIONS.detail}${params.connection_id}`, {
+    headers: authHeaders(params.token),
   })
-    .then((response) => {
-      return response;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "Could not check what that would affect."));
     });
 };
 
-const GetDeviceFilesRequest = async (params: any) => {
-  const authtoken = params.token;
-  const deviceparams = params.idwithdir;
-  const encodedparams = sign(deviceparams, SECRET);
-
-  return await Axios.get(`${API}${GET.getdevicefiles}${encodedparams}`, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "x-access-token": authtoken,
-    },
-  })
-    .then((response) => {
-      return response;
-    })
-    .catch((err) => {
-      throw new Error(err);
-    });
-};
-
-const GetFetchFileRequest = async (params: any) => {
-  const authtoken = params.token;
-  const deviceparams = params.handshake;
-  const encodedparams = sign(deviceparams, SECRET);
-  //ENCODED PARAMS
-
-  /**
-     * {
-        deviceID: `DVC_${deviceData.deviceID}`,
-        path: currentPath,
-        filename: string
-      }
-    */
-
-  //ENCODED PARAMS END
-
-  return await Axios.post(
-    `${API}${POST.fetchfile}`,
-    {
-      tokenizedpayload: encodedparams,
-    },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "x-access-token": authtoken,
-      },
-    }
+const DisconnectRequest = async (params: any) => {
+  return await Axios.delete(
+    `${API}${CONNECTIONS.detail}${params.connection_id}`,
+    { headers: authHeaders(params.token) },
   )
-    .then((response) => {
-      return response;
+    .then((response) => response.data)
+    .catch((err) => {
+      throw new Error(messageFrom(err, "Could not disconnect."));
+    });
+};
+
+// --------------------------------------------------------------- messaging --
+
+const GetMessagesListRequest = async (params: any) => {
+  return await Axios.get(`${API}${CHAT.list}`, {
+    headers: authHeaders(params.token),
+  })
+    .then((response) => response.data)
+    .catch((err) => {
+      throw new Error(messageFrom(err, "Could not load conversations."));
+    });
+};
+
+const GetConversationInfoRequest = async (params: any) => {
+  return await Axios.get(
+    `${API}${CONVERSATION.info}${params.conversation_id}`,
+    { headers: authHeaders(params.token) },
+  )
+    .then((response) => response.data)
+    .catch((err) => {
+      throw new Error(messageFrom(err, "Could not load this conversation."));
+    });
+};
+
+const GetMessagesRequest = async (params: any) => {
+  return await Axios.get(
+    `${API}${CHAT.messages}${params.conversation_id}`,
+    { headers: authHeaders(params.token) },
+  )
+    .then((response) => response.data)
+    .catch((err) => {
+      throw new Error(messageFrom(err, "Could not load messages."));
+    });
+};
+
+const StreamMessageRequest = async (
+  params: any,
+  payload: any,
+  callbacks: {
+    onChunk?: (chunk: string) => void;
+    onDone?: () => void;
+  } = {},
+) => {
+  // fetch rather than Axios: this response is an SSE stream read
+  // incrementally, and Axios buffers the whole body before resolving.
+  return await fetch(`${API}${CHAT.messages}${params.conversation_id}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": params.token,
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullStream = "";
+
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            callbacks.onDone?.();
+            break;
+          }
+
+          const chunk = decoder.decode(value, { stream: true });
+          fullStream += chunk;
+          callbacks.onChunk?.(chunk);
+        }
+
+        return fullStream;
+      } finally {
+        reader.releaseLock();
+      }
     })
     .catch((err) => {
-      throw new Error(err);
+      throw new Error(messageFrom(err, "The reply could not be streamed."));
     });
 };
 
 export {
   LoginRequest,
-  RegisterRequest,
   RefreshAuthRequest,
-  VerificationRequest,
-  AddDeviceRequest,
-  GetDevicesRequest,
-  GetDeviceInfoRequest,
-  GetDeviceFilesRequest,
-  GetFetchFileRequest,
+  ThirdPartyAuthenticationRequest,
+  GetConnectionsRequest,
+  GetAvailablePagesRequest,
+  ConnectPageRequest,
+  GetConnectionImpactRequest,
+  DisconnectRequest,
+  GetMessagesListRequest,
+  GetConversationInfoRequest,
+  GetMessagesRequest,
+  StreamMessageRequest,
 };
-

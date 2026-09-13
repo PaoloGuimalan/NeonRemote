@@ -1,42 +1,34 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/**
+ * WHAT WAS REMOVED, AND WHY IT MATTERED
+ * -------------------------------------
+ * This file still carried the Vite React template's scaffolding:
+ *
+ *   #root { max-width: 1280px; margin: 0 auto; padding: 2rem; text-align: center; }
+ *
+ * plus `.logo`, its spin animation and `.read-the-docs`, none of which any
+ * component references. The `#root` rule was not harmless: `text-align:
+ * center` inherits into the entire app, so every heading, table row and empty
+ * state was centred unless a screen explicitly said otherwise. The width cap
+ * went unnoticed only because `#div_app` is absolutely positioned and escapes
+ * the box - which is a coincidence, not a design.
+ *
+ * What is left is what is actually used.
+ */
+
+/* The autosize textarea in the playground composer draws its own frame. */
+textarea:focus-within {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* Used by app/widgets/Messages/IsTypingLoader. */
+.div_messages_result {
+  background-color: transparent;
+  width: fit-content;
+  max-width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
 }

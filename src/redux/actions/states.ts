@@ -1,42 +1,23 @@
-import { FetchedDeviceDataInterface } from "@/hooks/interfaces";
+import { AuthTokenInterface } from "@/hooks/interfaces";
 
-export const authenticationstate = {
+export const authenticationstate: {
+  auth: boolean | null;
+  user: AuthTokenInterface;
+} = {
   auth: null,
   user: {
-    fullname: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-    },
-    birthdate: {
-      month: "",
-      day: "",
-      year: "",
-    },
-    contact: "",
+    id: "",
+    username: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birthdate: "",
+    gender: "",
+    date_created: "",
     email: "",
     profile: "",
-    token: "",
-    isActivated: false,
-    isVerified: false,
-  },
-};
-
-export const fetchedDeviceDataState: FetchedDeviceDataInterface = {
-  deviceID: "",
-  deviceName: "",
-  type: "",
-  os: "",
-  connectionToken: "",
-  dateAdded: {
-    date: "",
-    time: "",
-  },
-  isActivated: true,
-  isMounted: false,
-  notifications: [],
-  files: {
-    directory: "",
-    list: [],
+    token: null,
+    is_active: false,
+    is_verified: false,
   },
 };
