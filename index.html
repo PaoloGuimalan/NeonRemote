@@ -5,6 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="./src/assets/SampleIcon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neon | Remote</title>
+    <!-- Runtime configuration, rendered by the container from the env file it was
+         given (docker/render-env.cjs). A classic script, so it runs during parsing -
+         ahead of the bundle, which Vite emits as a deferred module. src/hooks/env.ts
+         reads window._env_ at module scope, so it has to already be there.
+         public/env-config.js is an empty default, so `yarn dev` and a container with
+         no env file mounted fall through to the build-time values rather than 404. -->
+    <script src="/env-config.js"></script>
   </head>
   <body>
     <div id="root"></div>

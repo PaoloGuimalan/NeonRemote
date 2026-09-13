@@ -9,13 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AuthStateInterface } from "./hooks/interfaces";
 import jwtDecode from "jwt-decode";
 import { SET_AUTHENTICATION } from "./redux/types";
-import Register from "./app/auth/Register";
-import Verification from "./app/auth/Verification";
 import { Toaster } from "./components/ui/toaster";
 import { RefreshAuthRequest } from "./hooks/requests";
 import { useToast } from "./components/ui/use-toast";
 import Default from "./app/home/Default";
-// import Register from './app/auth/Register'
+import { OrganizationProvider } from "./app/context/OrganizationContext";
 
 function App() {
   const authentication: AuthStateInterface = useSelector(
@@ -115,17 +113,24 @@ function App() {
       <div className="font-Inter">
         <Toaster />
       </div>
+      {/* The is_verified gate that used to wrap every route is gone along with
+          /register and /verify. Verification belongs to Chatterloop now, and
+          its own login refuses an unverified account - so a session that
+          reaches Neon at all is already verified, and a second check here
+          could only ever disagree with the service that owns the answer. */}
       <Routes>
         <Route
           path="/*"
           element={
             authentication.auth != null ? (
               authentication.auth ? (
-                authentication.user.is_verified ? (
+                // The provider sits inside the signed-in branch because it
+                // calls the API immediately - mounting it around the whole
+                // tree would fire a request with no token on every visit to
+                // the login page.
+                <OrganizationProvider>
                   <Home />
-                ) : (
-                  <Navigate to={"/verify"} />
-                )
+                </OrganizationProvider>
               ) : (
                 <Navigate to={"/login"} />
               )
@@ -139,49 +144,9 @@ function App() {
           element={
             authentication.auth != null ? (
               authentication.auth ? (
-                authentication.user.is_verified ? (
-                  <Navigate to={"/"} />
-                ) : (
-                  <Navigate to={"/verify"} />
-                )
+                <Navigate to={"/"} />
               ) : (
                 <Login />
-              )
-            ) : (
-              <Default />
-            )
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            authentication.auth != null ? (
-              authentication.auth ? (
-                authentication.user.is_verified ? (
-                  <Navigate to={"/"} />
-                ) : (
-                  <Navigate to={"/verify"} />
-                )
-              ) : (
-                <Register />
-              )
-            ) : (
-              <Default />
-            )
-          }
-        />
-        <Route
-          path="/verify"
-          element={
-            authentication.auth != null ? (
-              authentication.auth ? (
-                authentication.user.is_verified ? (
-                  <Navigate to={"/"} />
-                ) : (
-                  <Verification />
-                )
-              ) : (
-                <Navigate to={"/login"} />
               )
             ) : (
               <Default />

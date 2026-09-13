@@ -1,14 +1,9 @@
 const AUTH = {
+  // Both forward to chatterloop: Neon no longer holds passwords, and there is
+  // no registration or email-verification path here any more - an account is
+  // created on chatterloop.
   login: "/api/user/auth",
-  register: "/auth/register",
   refreshauth: "/api/user/auth",
-  verification: "/auth/verification",
-};
-
-const GET = {
-  getdevices: "/access/getdevices",
-  getdeviceinfo: "/access/getdeviceinfo/",
-  getdevicefiles: "/access/getdevicefiles/",
 };
 
 const CHAT = {
@@ -20,13 +15,15 @@ const CONVERSATION = {
   info: "/api/messenger/conversation/",
 };
 
-const POST = {
-  adddevice: "/access/adddevice",
-  fetchfile: "/access/fetchfile",
-};
-
 const TPAUTH = {
   auth: "/api/user/tp_auth",
 };
 
-export { AUTH, GET, POST, CHAT, CONVERSATION, TPAUTH };
+const CONNECTIONS = {
+  list: "/api/core/connections",
+  availablePages: "/api/core/connections/pages/available",
+  connectPage: "/api/core/connections/pages",
+  detail: "/api/core/connections/",
+};
+
+export { AUTH, CHAT, CONVERSATION, TPAUTH, CONNECTIONS };

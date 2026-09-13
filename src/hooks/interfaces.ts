@@ -4,21 +4,6 @@ export interface ActionProp {
   payload: any;
 }
 
-export interface RegisterInterface {
-  fullname: {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-  };
-  birthdate: {
-    month: string;
-    day: string;
-    year: string;
-  };
-  contact: string;
-  email: string;
-  password: string;
-}
 
 export interface AuthTokenInterface {
   id: string;
@@ -42,78 +27,13 @@ export interface AuthStateInterface {
   user: AuthTokenInterface;
 }
 
-export interface DialogWidgetProp {
-  buttonlabel: string;
-  icon: any;
-}
 
-export interface DeviceInfoInterface {
-  deviceName: string;
-  deviceType: string;
-  os: string;
-}
 
-export interface DropdownMenuWidgetInterface {
-  position: string;
-  labels: any;
-  list: any[];
-  setPosition: (newType: string) => void;
-}
 
-export interface FetchedDeviceDataInterface {
-  deviceID: string;
-  deviceName: string;
-  type: string;
-  os: string;
-  connectionToken: string;
-  dateAdded: {
-    date: string;
-    time: string;
-  };
-  isActivated: boolean;
-  isMounted: boolean;
-  notifications: any[];
-  files: {
-    directory: string;
-    list: any[];
-  };
-}
 
-export interface OnGoingFileTransferItem {
-  deviceID: string;
-  toID: string;
-  file: {
-    totalChunks: number;
-    mimeType: string;
-    size: number;
-    filename: string;
-    path: string;
-    parts: any[];
-  };
-}
 
-export interface SystemLogsItem {
-  deviceID: string;
-  time: string;
-  status: number;
-  host: string;
-  request: string;
-  data: string;
-}
 
-export interface IDeviceContextMenu {
-  clientX: number;
-  clientY: number;
-  toggled: boolean;
-  target: string;
-  data: IDeviceItems | null;
-}
 
-export interface IDeviceItems {
-  filename: string;
-  path: string | any;
-  type: string;
-}
 
 export interface IMessage {
   message_id: string;
@@ -152,4 +72,35 @@ export interface IPagination<T> {
   next: string | null;
   previous: string | null;
   results: T[];
+}
+
+/** An external identity this account can publish bots as. */
+export interface IConnectedAccount {
+  id: string;
+  provider: string;
+  external_id: string;
+  external_type: "user" | "realm";
+  external_username: string;
+  external_name: string;
+  external_profile: string;
+  metadata: { realm_id?: string; role?: string };
+  connected_at: string;
+  last_verified_at: string | null;
+  is_active: boolean;
+}
+
+/**
+ * A Chatterloop page that could be connected but has not been.
+ *
+ * Read live from Chatterloop each time - never stored in Neon unless the
+ * user actually connects it, so a revoked admin role stops offering the page
+ * on the next load rather than lingering.
+ */
+export interface IAvailablePage {
+  realm_id: string;
+  entity_id: string;
+  name: string;
+  slug: string;
+  profile: string;
+  role: string;
 }

@@ -1,4 +1,6 @@
+import { GOOGLE_CLIENT_ID, LOCAL_TOKEN_SECRET } from "./env";
+
 export const envs = {
-  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-  SECRET: import.meta.env.VITE_JWT_SECRET,
+  GOOGLE_CLIENT_ID,
+  SECRET: LOCAL_TOKEN_SECRET,
 };

@@ -1,0 +1,4 @@
+# The container executes these. A CRLF shebang fails on Alpine as
+# "not found", which reads like a missing file rather than a line ending.
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf

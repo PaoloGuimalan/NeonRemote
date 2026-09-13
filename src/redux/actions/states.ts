@@ -1,6 +1,9 @@
-import { FetchedDeviceDataInterface } from "@/hooks/interfaces";
+import { AuthTokenInterface } from "@/hooks/interfaces";
 
-export const authenticationstate = {
+export const authenticationstate: {
+  auth: boolean | null;
+  user: AuthTokenInterface;
+} = {
   auth: null,
   user: {
     id: "",
@@ -9,30 +12,12 @@ export const authenticationstate = {
     middle_name: "",
     last_name: "",
     birthdate: "",
-    profile: "",
     gender: "",
-    email: "",
     date_created: "",
+    email: "",
+    profile: "",
+    token: null,
     is_active: false,
     is_verified: false,
-  },
-};
-
-export const fetchedDeviceDataState: FetchedDeviceDataInterface = {
-  deviceID: "",
-  deviceName: "",
-  type: "",
-  os: "",
-  connectionToken: "",
-  dateAdded: {
-    date: "",
-    time: "",
-  },
-  isActivated: true,
-  isMounted: false,
-  notifications: [],
-  files: {
-    directory: "",
-    list: [],
   },
 };

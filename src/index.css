@@ -91,16 +91,6 @@
   background-color: #f0f0f0;
 }
 
-.bghome {
-  background-image:
-    linear-gradient(to bottom, transparent 0%, #ffffff 70%),
-    url("./assets/bghome.jpg");
-  background-position: bottom;
-  background-repeat: no-repeat;
-  background-size: cover;
-  backdrop-filter: blur(3px);
-}
-
 @layer base {
   * {
     @apply border-border;

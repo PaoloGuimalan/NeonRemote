@@ -1,1 +1,37 @@
-/node_modules
+# What the build context does not need.
+#
+# Configuration is resolved at RUNTIME from the env file the container is given
+# (docker/render-env.cjs renders it into window._env_), so the build needs no
+# .env and nothing is inlined into the bundle at build time.
+#
+# The thing to understand about frontend config either way is that none of it
+# is private. Whatever reaches window._env_ is served to browsers, whatever the
+# variable is called. Genuine secrets belong on the API.
+
+.env
+*.env
+
+node_modules
+**/node_modules
+
+# Stale local builds. `yarn build` regenerates dist; shipping an old one into
+# the context just carries a previous bundle, and whatever was baked into it,
+# along for the ride.
+dist
+dist-ssr
+
+# The full history, for no benefit at build time.
+.git
+.gitignore
+
+# Logs and editor noise.
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.local
+.vscode
+.idea
+.DS_Store
