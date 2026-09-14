@@ -63,22 +63,26 @@ const INLINE_RULES: InlineRule[] = [
       </code>
     ),
   },
+  // EMPHASIS IS FLANKING-AWARE. `(?!\s)` opens on non-space and the trailing
+  // `[^\s*]` closes on non-space, the way CommonMark's flanking rules do.
+  // Without it "it cost 5 * 3 * 4" renders " 3 " in italics - and the user's
+  // own messages go through this renderer too, not just model prose, so plain
+  // arithmetic in a question must survive it.
   {
-    pattern: /\*\*([^\n]+?)\*\*/,
+    pattern: /\*\*(?!\s)([^\n]*?[^\s*])\*\*/,
     render: (m, key) => <strong key={key}>{renderInline(m[1], `${key}-i`)}</strong>,
   },
   {
-    pattern: /__([^\n]+?)__/,
+    pattern: /__(?!\s)([^\n]*?[^\s_])__/,
     render: (m, key) => <strong key={key}>{renderInline(m[1], `${key}-i`)}</strong>,
   },
   {
-    pattern: /~~([^\n]+?)~~/,
+    pattern: /~~(?!\s)([^\n]*?[^\s~])~~/,
     render: (m, key) => <del key={key}>{renderInline(m[1], `${key}-i`)}</del>,
   },
   {
-    // Not preceded or followed by another asterisk, so the bold rule above has
-    // already claimed those and this cannot eat half of one.
-    pattern: /\*([^*\n]+?)\*/,
+    // Single `*`; the bold rule above has already claimed doubled delimiters.
+    pattern: /\*(?!\s)([^*\n]*[^\s*])\*/,
     render: (m, key) => <em key={key}>{renderInline(m[1], `${key}-i`)}</em>,
   },
   {
@@ -90,7 +94,7 @@ const INLINE_RULES: InlineRule[] = [
     // before 16.4, and a parse error in one regex takes the whole bundle down
     // - not just this component. Vite sets no explicit target here, so that is
     // not a risk worth carrying for two characters of convenience.
-    pattern: /(^|\W)_([^_\n]+?)_(?=\W|$)/,
+    pattern: /(^|\W)_(?!\s)([^_\n]*[^\s_])_(?=\W|$)/,
     render: (m, key) => (
       <Fragment key={key}>
         {m[1]}
