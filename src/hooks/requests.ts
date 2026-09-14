@@ -182,9 +182,20 @@ const DisconnectRequest = async (params: any) => {
 
 // --------------------------------------------------------------- messaging --
 
+/**
+ * The caller's conversations.
+ *
+ * `origins` narrows to particular surfaces - see `ConversationOrigin`. Sent
+ * comma-separated because the platform accepts that as well as repeated
+ * params, and one value is easier to read in a network log. Omitted entirely
+ * when nothing is selected: an empty `origin=` would be sent as a filter that
+ * matches nothing on some servers, and here means "no filter" only by luck.
+ */
 const GetMessagesListRequest = async (params: any) => {
+  const origins: string[] = params.origins ?? [];
   return await Axios.get(`${API}${CHAT.list}`, {
     headers: authHeaders(params.token),
+    params: origins.length ? { origin: origins.join(",") } : undefined,
   })
     .then((response) => response.data)
     .catch((err) => {

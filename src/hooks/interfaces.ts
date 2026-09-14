@@ -57,6 +57,17 @@ export interface IPendingMessage {
   content: string;
 }
 
+/**
+ * Which surface a conversation was started from.
+ *
+ * Mirrors `Conversation.ORIGIN_CHOICES` on the platform. Worth knowing why
+ * this matters here: a Chatterloop bot's threads are attributed to whoever
+ * owns the bot, so they land in that person's playground list alongside their
+ * own chats. Without the distinction they are indistinguishable from something
+ * the user started themselves.
+ */
+export type ConversationOrigin = "native" | "external" | "chatterloop";
+
 export interface IConversation {
   conversation_id: string;
   name: string;
@@ -65,6 +76,11 @@ export interface IConversation {
   created_by: string;
   created_at: string;
   latest_message: IMessage | null;
+  origin: ConversationOrigin;
+  /** The platform's own wording for `origin`, so the two cannot disagree. */
+  origin_label: string;
+  /** True for anything that did not happen on Neon's own frontend. */
+  is_external: boolean;
 }
 
 export interface IPagination<T> {

@@ -23,4 +23,11 @@ export const defaultConversationState: IConversation = {
   created_at: "",
   organization: "",
   created_by: "",
+  // Native until the real conversation loads. The optimistic direction on
+  // purpose: the composer is disabled for the other two, and briefly disabling
+  // it on a thread that turns out to be your own would flicker the one control
+  // this screen exists for.
+  origin: "native",
+  origin_label: "Neon platform",
+  is_external: false,
 };
