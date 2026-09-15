@@ -184,15 +184,34 @@ export const Knowledge = {
       "Could not load that document.",
     ),
 
-  createFromText: (ctx: ApiContext, payload: { title: string; content: string }) =>
-    apiPost<IKnowledgeDocument>("/api/llm/knowledge", ctx, payload, "Could not index that document."),
+  createFromText: (
+    ctx: ApiContext,
+    payload: { title: string; content: string; agent_uuids?: string[] },
+  ) => apiPost<IKnowledgeDocument>("/api/llm/knowledge", ctx, payload, "Could not index that document."),
 
-  upload: (ctx: ApiContext, file: File, title?: string) => {
+  upload: (ctx: ApiContext, file: File, title?: string, agentUuids?: string[]) => {
     const form = new FormData();
     form.append("file", file);
     if (title) form.append("title", title);
+    // Comma-separated rather than repeated fields: multipart cannot carry a
+    // JSON array, and the API accepts this shape for exactly that reason.
+    if (agentUuids && agentUuids.length) form.append("agent_uuids", agentUuids.join(","));
     return apiPostForm<IKnowledgeDocument>("/api/llm/knowledge", ctx, form, "Could not index that file.");
   },
+
+  /**
+   * Change which agents may read a document.
+   *
+   * An empty array shares it with every agent again, which is the default
+   * state - restricting a document must not be a one-way door.
+   */
+  setAgents: (ctx: ApiContext, documentId: string, agentUuids: string[]) =>
+    apiPatch<IKnowledgeDocument>(
+      `/api/llm/knowledge/${documentId}`,
+      ctx,
+      { agent_uuids: agentUuids },
+      "Could not change who can read that document.",
+    ),
 
   reindex: (ctx: ApiContext, documentId: string) =>
     apiPost<IKnowledgeDocument>(`/api/llm/knowledge/${documentId}`, ctx, undefined, "Could not re-index."),

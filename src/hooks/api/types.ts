@@ -120,6 +120,13 @@ export interface IModel {
 
 export type KnowledgeStatus = "pending" | "indexing" | "indexed" | "failed";
 
+/** An agent a document has been given to. Name included so the knowledge
+ *  screen can say who can read a document without a second request. */
+export interface IKnowledgeAgent {
+  uuid: string;
+  name: string;
+}
+
 export interface IKnowledgeDocument {
   id: string;
   title: string;
@@ -129,6 +136,11 @@ export interface IKnowledgeDocument {
   status: KnowledgeStatus;
   error: string;
   chunk_count: number;
+  /** Empty when shared. Many-to-many: a document can go to any number of
+   *  agents, and an agent can hold any number of documents. */
+  agents: IKnowledgeAgent[];
+  /** Readable by every agent in the organization - the default. */
+  is_shared: boolean;
   uploaded_by_username: string;
   created_at: string;
   updated_at: string;

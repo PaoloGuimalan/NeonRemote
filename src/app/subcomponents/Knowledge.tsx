@@ -17,9 +17,18 @@
  * `pending` and becomes `indexed` or `failed` on a worker. This polls while
  * anything is still in flight - without that, the screen would show "pending"
  * forever and look stuck when it is merely working.
+ *
+ * WHO CAN READ A DOCUMENT IS SHOWN ON EVERY CARD
+ * ----------------------------------------------
+ * A document is shared with every agent unless it names some, and that is a
+ * confidentiality decision rather than a filing one: an agent bound to a
+ * Chatterloop bot answers people OUTSIDE the organization, so "shared" means a
+ * document is reachable by anyone who can talk to any of your bots. Showing it
+ * per card rather than behind a menu is the point - it is not a setting people
+ * should have to go looking for.
  */
 import { useEffect, useRef, useState } from "react";
-import { FiRefreshCw, FiUpload } from "react-icons/fi";
+import { FiRefreshCw, FiUpload, FiUsers } from "react-icons/fi";
 
 import { ConfirmDialog, FormDialog } from "@/app/widgets/Modal";
 import {
@@ -38,8 +47,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { Credentials, Knowledge as KnowledgeApi } from "@/hooks/api/resources";
-import { IEmbeddingStatus, IKnowledgeDocument, KnowledgeStatus } from "@/hooks/api/types";
+import { Agents, Credentials, Knowledge as KnowledgeApi } from "@/hooks/api/resources";
+import { IAgent, IEmbeddingStatus, IKnowledgeDocument, KnowledgeStatus } from "@/hooks/api/types";
 import { formatToWords } from "@/hooks/reusables";
 import { useResource } from "@/hooks/useResource";
 
@@ -56,6 +65,61 @@ const readableSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
+/**
+ * Who may read a document.
+ *
+ * "Every agent" is a checkbox rather than an absent state because the default
+ * needs saying out loud. A dialog whose agent list is simply all-unticked
+ * reads as "nobody yet", when it actually means the opposite.
+ */
+function AgentAccess({
+  agents,
+  selected,
+  onChange,
+}: {
+  agents: IAgent[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+}) {
+  const shared = selected.length === 0;
+
+  const toggle = (uuid: string) =>
+    onChange(selected.includes(uuid) ? selected.filter((u) => u !== uuid) : [...selected, uuid]);
+
+  if (agents.length === 0) {
+    return (
+      <span className="text-[12px] text-[#767676]">
+        No agents yet. Documents are readable by every agent you create.
+      </span>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-[2px]">
+      <label className="flex flex-row items-center gap-[8px] text-[13px] py-[5px] cursor-pointer">
+        <input type="checkbox" checked={shared} onChange={() => onChange([])} />
+        <span className={shared ? "font-semibold" : ""}>Every agent</span>
+        <span className="text-[11px] text-[#767676]">default</span>
+      </label>
+      <div className="h-[1px] bg-[#ececec] my-[4px]" />
+      {agents.map((agent) => (
+        <label
+          key={agent.uuid}
+          className="flex flex-row items-center gap-[8px] text-[13px] py-[5px] cursor-pointer"
+        >
+          <input
+            type="checkbox"
+            checked={selected.includes(agent.uuid)}
+            onChange={() => toggle(agent.uuid)}
+          />
+          <span>{agent.name}</span>
+          {!agent.is_active && <span className="text-[11px] text-[#767676]">inactive</span>}
+        </label>
+      ))}
+    </div>
+  );
+}
+
 function Knowledge() {
   const { toast } = useToast();
 
@@ -65,8 +129,15 @@ function Knowledge() {
     reason: "",
   });
 
+  const agents = useResource<IAgent[]>((ctx) => Agents.list(ctx), []);
+
   const [adding, setadding] = useState(false);
   const [deleting, setdeleting] = useState<IKnowledgeDocument | null>(null);
+  // Which document's access is being changed, and the selection in progress.
+  // Held apart from the document so cancelling leaves the row untouched.
+  const [accessFor, setaccessFor] = useState<IKnowledgeDocument | null>(null);
+  const [accessPick, setaccessPick] = useState<string[]>([]);
+  const [newDocAgents, setnewDocAgents] = useState<string[]>([]);
   const [title, settitle] = useState("");
   const [content, setcontent] = useState("");
   const [busy, setbusy] = useState(false);
@@ -92,11 +163,13 @@ function Knowledge() {
       await KnowledgeApi.createFromText(documents.ctx, {
         title: title.trim() || "Untitled document",
         content,
+        agent_uuids: newDocAgents,
       });
       toast({ title: "Queued for indexing" });
       setadding(false);
       settitle("");
       setcontent("");
+      setnewDocAgents([]);
       documents.reload();
     } catch (err: any) {
       setformError(err?.message ?? "Could not index that document.");
@@ -126,6 +199,31 @@ function Knowledge() {
       documents.reload();
     } catch (err: any) {
       toast({ title: "Could not re-index", description: err?.message, variant: "destructive" });
+    }
+  };
+
+  const saveAccess = async () => {
+    if (!accessFor) return;
+    setbusy(true);
+    try {
+      await KnowledgeApi.setAgents(documents.ctx, accessFor.id, accessPick);
+      toast({
+        title: accessPick.length === 0 ? "Shared with every agent" : "Access updated",
+        // Only the shared/restricted switch touches the index, and it happens
+        // on a worker - so retrieval can disagree with this screen briefly and
+        // saying so beats somebody testing it immediately and concluding it
+        // did not work.
+        description:
+          accessFor.status === "indexed" && accessFor.is_shared !== (accessPick.length === 0)
+            ? "Retrieval catches up in a moment."
+            : undefined,
+      });
+      setaccessFor(null);
+      documents.reload();
+    } catch (err: any) {
+      toast({ title: "Could not change access", description: err?.message, variant: "destructive" });
+    } finally {
+      setbusy(false);
     }
   };
 
@@ -237,6 +335,19 @@ function Knowledge() {
                 </span>
               )}
 
+              <div className="flex flex-row items-center gap-[6px] flex-wrap text-[12px]">
+                <FiUsers style={{ fontSize: "13px", color: "#767676" }} />
+                {document.is_shared ? (
+                  <span className="text-[#767676]">Every agent</span>
+                ) : (
+                  document.agents.map((agent) => (
+                    <Badge key={agent.uuid} tone="neutral">
+                      {agent.name}
+                    </Badge>
+                  ))
+                )}
+              </div>
+
               <div className="flex flex-row gap-[6px] pt-[4px]">
                 <Button
                   variant="outline"
@@ -246,6 +357,16 @@ function Knowledge() {
                 >
                   <FiRefreshCw style={{ fontSize: "13px" }} />
                   <span>Re-index</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-[30px] text-[12px]"
+                  onClick={() => {
+                    setaccessPick(document.agents.map((agent) => agent.uuid));
+                    setaccessFor(document);
+                  }}
+                >
+                  Access
                 </Button>
                 <div className="flex flex-1" />
                 <Button
@@ -289,6 +410,24 @@ function Knowledge() {
             onChange={(e) => setcontent(e.target.value)}
           />
         </Field>
+        <Field
+          label="Who can read it"
+          hint="Shared with every agent unless you pick some. You can change this later."
+        >
+          <AgentAccess agents={agents.data} selected={newDocAgents} onChange={setnewDocAgents} />
+        </Field>
+      </FormDialog>
+
+      <FormDialog
+        open={accessFor !== null}
+        onOpenChange={(open) => !open && setaccessFor(null)}
+        title={`Who can read ${accessFor?.title}?`}
+        description="Pick the agents that may answer from this document. Choose Every agent to share it again."
+        submitLabel="Save"
+        submitting={busy}
+        onSubmit={saveAccess}
+      >
+        <AgentAccess agents={agents.data} selected={accessPick} onChange={setaccessPick} />
       </FormDialog>
 
       <ConfirmDialog
