@@ -199,6 +199,14 @@ export interface IChatterloopBot {
   /** The switch: should a supervisor hold an event stream for this bot? */
   is_online: boolean;
   online_changed_at: string | null;
+  /**
+   * Whether this bot answers OTHER BOTS, so two can work through a task
+   * together. Off by default: bots that answer each other have no natural
+   * stopping point, since every threaded reply re-addresses the other. When
+   * on, a per-conversation turn budget bounds it, and a person speaking in the
+   * conversation hands that budget back.
+   */
+  allow_bot_conversations: boolean;
   /** What SHOULD be true, from the database. */
   should_run: boolean;
   /**

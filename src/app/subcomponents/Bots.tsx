@@ -337,6 +337,26 @@ function Bots() {
     }
   };
 
+  const toggleBotChat = async (bot: IChatterloopBot, allowed: boolean) => {
+    setswitching(bot.id);
+    try {
+      await BotsApi.setBotConversations(bots.ctx, bot.id, allowed);
+      toast({
+        title: allowed
+          ? `@${bot.handle} can work with other bots`
+          : `@${bot.handle} will ignore other bots`,
+        description: allowed
+          ? "Both bots need this on. A conversation runs until the task is done or the turn budget is spent."
+          : "Any exchange it is in stops after its current turn.",
+      });
+      bots.reload();
+    } catch (err: any) {
+      toast({ title: "Could not change that", description: err?.message, variant: "destructive" });
+    } finally {
+      setswitching("");
+    }
+  };
+
   const toggleOnline = async (bot: IChatterloopBot, online: boolean) => {
     setswitching(bot.id);
     try {
@@ -487,6 +507,24 @@ function Bots() {
                     deleted, and its token still works.
                   </span>
                 )}
+
+                <label className="flex flex-row items-start gap-[8px] text-[12px] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="mt-[2px]"
+                    checked={bot.allow_bot_conversations}
+                    disabled={switching === bot.id || bot.status !== "active"}
+                    onChange={(e) => toggleBotChat(bot, e.target.checked)}
+                  />
+                  <span className="flex flex-col gap-[2px]">
+                    <span>Work with other bots</span>
+                    <span className="text-[11px] text-[#767676]">
+                      {bot.allow_bot_conversations
+                        ? "Answers other bots so they can work a task through together. Both bots need this on; turn it off to stop one mid-conversation."
+                        : "Ignores other bots. Only people can start a conversation with it."}
+                    </span>
+                  </span>
+                </label>
 
                 {bot.status === "failed" && bot.status_reason && (
                   <span className="text-[12px] text-[#8c2f27] bg-[#fdf3f2] rounded-[6px] p-[8px] line-clamp-3">

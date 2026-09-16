@@ -267,9 +267,24 @@ export const Bots = {
       agent_uuid?: string;
       model_uuid?: string;
       credential_id?: string;
+      allow_bot_conversations?: boolean;
     },
   ) =>
     apiPatch<IChatterloopBot>(`/api/chatterloop/bots/${botId}`, ctx, payload, "Could not save that bot."),
+
+  /**
+   * Let this bot answer other bots, or stop it.
+   *
+   * Switching it off is how a running collaboration is ended early - each bot
+   * checks its own flag, so one of the pair going quiet is enough.
+   */
+  setBotConversations: (ctx: ApiContext, botId: string, allowed: boolean) =>
+    apiPatch<IChatterloopBot>(
+      `/api/chatterloop/bots/${botId}`,
+      ctx,
+      { allow_bot_conversations: allowed },
+      "Could not change that setting.",
+    ),
 
   /**
    * Start or stop this bot's event stream.
