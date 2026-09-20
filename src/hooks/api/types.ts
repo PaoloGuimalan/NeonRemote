@@ -225,6 +225,23 @@ export interface IChatterloopBot {
   handle_mismatch: boolean;
   last_verified_at: string | null;
   tokens: IChatterloopToken[];
+  /**
+   * The bot's control endpoint - POST ?action=wake|sleep with the control key
+   * as a bearer token. Anything that can make a request can drive it: a cron
+   * job, a deploy script, another product.
+   *
+   */
+  control_url: string;
+  /**
+   * The key that endpoint accepts, as a bearer token.
+   *
+   * A CREDENTIAL, and it is in every bot listing - so it reaches logs, caches
+   * and screenshots the way any displayed secret does. That is the accepted
+   * trade: a URL nobody can actually call is worse than not showing one. It
+   * is scoped to a single bot and a single power, and the server can rotate
+   * it if a copy escapes.
+   */
+  control_key: string;
   is_live: boolean;
   created_at: string;
   updated_at: string;

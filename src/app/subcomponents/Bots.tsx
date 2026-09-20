@@ -242,6 +242,101 @@ function RunState({ bot }: { bot: IChatterloopBot }) {
   return <Badge tone="good">listening</Badge>;
 }
 
+
+/**
+ * The bot's control endpoint, as two links somebody can copy.
+ *
+ * WHY IT LIVES ON THE CARD
+ * ------------------------
+ * This is the one thing about a bot that is used OUTSIDE Neon - pasted into a
+ * cron job, a deploy script, or chatterloop's own /wake. Putting it behind a
+ * dialog would mean nobody discovers it, and the whole point of a prebuilt
+ * endpoint is that it is there without being asked for.
+ *
+ * NOTHING IS FETCHED. Both the URL and the key arrive with the bot, so the
+ * card costs no request.
+ *
+ * THE KEY IS A CREDENTIAL, shown because the URLs are useless without it - a
+ * pair of links nobody can call is worse than none. It is masked until asked
+ * for, which does not make it secret (it is in the payload either way) but
+ * does keep it out of the screenshot somebody takes of their bot list.
+ */
+function ControlEndpoint({ bot }: { bot: IChatterloopBot }) {
+  const { toast } = useToast();
+  const [showKey, setShowKey] = useState(false);
+
+  if (!bot.control_url) return null;
+
+  const copy = async (url: string, what: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({ title: what === "key" ? "Copied the key" : `Copied the ${what} URL` });
+    } catch {
+      // A clipboard write can be refused outright - an insecure origin, or a
+      // browser that wants a user gesture it did not see. The text is
+      // selectable, so say so rather than failing silently.
+      toast({ title: "Select and copy it manually", variant: "destructive" });
+    }
+  };
+
+  return (
+    <Field label="Control endpoint">
+      <div className="flex flex-col gap-[6px]">
+        {(["wake", "sleep"] as const).map((action) => {
+          const url = `${bot.control_url}?action=${action}`;
+          return (
+            <div key={action} className="flex flex-row items-center gap-[6px]">
+              <code
+                className="flex-1 min-w-0 text-[11px] font-mono bg-[#f7f8fa] border-[1px] border-[#e5e6ea] rounded-[6px] px-[8px] py-[6px] truncate select-all"
+                title={url}
+              >
+                {url}
+              </code>
+              <Button
+                variant="outline"
+                className="h-[30px] shrink-0 gap-[4px] px-[8px]"
+                onClick={() => copy(url, action)}
+              >
+                <FiCopy style={{ fontSize: "12px" }} />
+                <span className="text-[11px]">Copy</span>
+              </Button>
+            </div>
+          );
+        })}
+        {bot.control_key && (
+          <div className="flex flex-row items-center gap-[6px]">
+            <code className="flex-1 min-w-0 text-[11px] font-mono bg-[#f7f8fa] border-[1px] border-[#e5e6ea] rounded-[6px] px-[8px] py-[6px] truncate select-all">
+              {showKey ? bot.control_key : "•".repeat(24)}
+            </code>
+            <Button
+              variant="outline"
+              className="h-[30px] shrink-0 px-[8px]"
+              onClick={() => setShowKey((was) => !was)}
+            >
+              <span className="text-[11px]">{showKey ? "Hide" : "Show"}</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-[30px] shrink-0 gap-[4px] px-[8px]"
+              onClick={() => copy(bot.control_key, "key")}
+            >
+              <FiCopy style={{ fontSize: "12px" }} />
+              <span className="text-[11px]">Copy</span>
+            </Button>
+          </div>
+        )}
+
+        <span className="text-[11px] text-[#767676]">
+          POST either URL with{" "}
+          <code className="font-mono">Authorization: Bearer &lt;key&gt;</code> to
+          start or stop this bot from anywhere. Nothing else changes - the
+          token, the agent binding and the identity all survive.
+        </span>
+      </div>
+    </Field>
+  );
+}
+
 function Bots() {
   const { toast } = useToast();
 
@@ -592,6 +687,8 @@ function Bots() {
                     ))}
                   </Select>
                 </Field>
+
+                <ControlEndpoint bot={bot} />
 
                 {bot.status === "active" && bot.is_online && !bot.can_answer && (
                   <span className="text-[12px] text-[#8a6100] bg-[#fdf4e3] rounded-[6px] p-[8px]">
